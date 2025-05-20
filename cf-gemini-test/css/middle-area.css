@@ -36,7 +36,7 @@
 
 
 .preview-item img {
-    max-height: 100px;
+    max-height: 70px;
     width: auto;
     object-fit: contain;
     border-radius: 4px;
