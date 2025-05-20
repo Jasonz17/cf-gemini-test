@@ -88,23 +88,26 @@ serve(async (req) => {
             } else {
               // 大于 20MB，使用文件上传 API
               console.log(`Uploading large file: ${file.name}`);
-              // 显式检查文件对象和 size 属性
-              if (!file || typeof file.size !== 'number') {
-                console.error(`Invalid file object or missing size property for file ${file.name}:`, file);
-                return new Response(`Error processing file: Invalid file object for ${file.name}`, { status: 500 });
-              }
-              const uploadResult = await ai.files.upload(file, {
-                mimeType: file.type,
-                displayName: file.name,
-              });
-              console.log(`Upload complete for ${file.name}, URI: ${uploadResult.file.uri}`);
+              try {
+                const fileBuffer = await file.arrayBuffer();
+                const fileBlob = new Blob([fileBuffer], { type: file.type });
 
-              contents.push({
-                fileData: {
+                const uploadResult = await ai.files.upload(fileBlob, {
                   mimeType: file.type,
-                  uri: uploadResult.file.uri,
-                },
-              });
+                  displayName: file.name,
+                });
+                console.log(`Upload complete for ${file.name}, URI: ${uploadResult.file.uri}`);
+
+                contents.push({
+                  fileData: {
+                    mimeType: file.type,
+                    uri: uploadResult.file.uri,
+                  },
+                });
+              } catch (uploadError) {
+                console.error(`Error uploading large file ${file.name}:`, uploadError);
+                return new Response(`Error uploading file: ${file.name}`, { status: 500 });
+              }
             }
           } catch (fileProcessError) {
             console.error(`Error processing file ${file.name}:`, fileProcessError);
