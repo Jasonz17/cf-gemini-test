@@ -165,8 +165,40 @@
 
 .toolbar-icon:hover {
     opacity: 1;
-    color: #495057;
-    background-color: #f0f0f0;
+}
+
+/* 聊天气泡内的文件预览容器样式 */
+.message-file-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px; /* 与消息内容间隔 */
+    padding-top: 10px;
+    border-top: 1px solid #eee; /* 分隔线 */
+}
+
+.message-preview-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.message-preview-item img {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.message-file-name {
+    font-size: 12px;
+    color: #555;
+    text-align: center;
+    max-width: 80px; /* 限制文件名宽度 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* 文件预览容器样式 */
