@@ -287,7 +287,7 @@ export function initializeMiddleArea() {
             formData.append('model', selectedModel); // 使用选中的模型
             formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw'); // 使用指定的 API 密钥
             formData.append('input', messageText); // 用户输入作为内容
-            formData.append('stream', isStreamMode.toString()); // 添加流式响应标志
+            formData.append('stream', streamToggleStatus.toString()); // 添加流式响应标志
 
             // 添加文件到 FormData
             selectedFiles.forEach((file, index) => {
@@ -316,8 +316,7 @@ export function initializeMiddleArea() {
             chatDisplay.appendChild(aiMessageElement);
 
             // 获取流式响应状态
-            const streamToggle = document.querySelector('.stream-toggle');
-            const isStreamMode = streamToggle && streamToggle.classList.contains('active');
+            const streamToggleStatus = streamToggle && streamToggle.classList.contains('active');
 
             // 调用后端 API
             try {
