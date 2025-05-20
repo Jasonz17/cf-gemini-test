@@ -95,16 +95,11 @@ export function initializeMiddleArea() {
         messageElement.classList.add('message', message.type);
 
         if (Array.isArray(message.content)) { // Check if content is an array of parts
-            const textContainer = document.createElement('div');
-            textContainer.className = 'message-text-content';
-            const filesContainer = document.createElement('div');
-            filesContainer.className = 'message-files-content';
-
             message.content.forEach(part => {
                 if (part.type === 'text' && part.content) {
                     const textElement = document.createElement('div');
                     textElement.textContent = part.content;
-                    textContainer.appendChild(textElement);
+                    messageElement.appendChild(textElement);
                 } else if (part.type === 'file') {
                     const filePreviewElement = document.createElement('div');
                     filePreviewElement.classList.add('chat-file-preview');
@@ -132,28 +127,18 @@ export function initializeMiddleArea() {
                     });
                     filePreviewElement.appendChild(viewButton);
 
-                    filesContainer.appendChild(filePreviewElement);
+                    messageElement.appendChild(filePreviewElement);
                 } else if (part.inlineData) {
                     const imgElement = document.createElement('img');
                     imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
                     imgElement.style.maxWidth = '100%'; // Optional: style the image
                     imgElement.style.height = 'auto'; // Optional: style the image
-                    filesContainer.appendChild(imgElement);
+                    messageElement.appendChild(imgElement);
                 }
             });
-
-            if (textContainer.hasChildNodes()) {
-                messageElement.appendChild(textContainer);
-            }
-            if (filesContainer.hasChildNodes()) {
-                messageElement.appendChild(filesContainer);
-            }
-
         } else if (typeof message.content === 'string') {
             // Handle plain text response (for backward compatibility or non-image models)
-            const textElement = document.createElement('div');
-            textElement.textContent = message.content;
-            messageElement.appendChild(textElement);
+            messageElement.textContent = message.content;
         }
 
         chatDisplay.appendChild(messageElement);
@@ -340,7 +325,6 @@ export function initializeMiddleArea() {
                 }
 
                 const aiResponse = await response.json();
-                console.log('AI Response Structure:', aiResponse); // Log the AI response structure
                 displayMessage({
                     type: 'ai',
                     content: aiResponse
