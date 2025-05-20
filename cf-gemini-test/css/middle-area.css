@@ -174,7 +174,7 @@
     gap: 10px;
     margin-top: 10px; /* 与消息内容间隔 */
     padding-top: 10px;
-    border-top: 1px solid #eee; /* 分隔线 */
+    /* border-top: 1px solid #eee; */
 }
 
 .message-preview-item {
