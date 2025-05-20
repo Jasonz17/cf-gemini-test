@@ -284,6 +284,7 @@ export function initializeMiddleArea() {
             formData.append('model', selectedModel); // 使用选中的模型
             formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw'); // 使用指定的 API 密钥
             formData.append('input', messageText); // 用户输入作为内容
+            formData.append('stream', isStreamMode.toString()); // 添加流式响应标志
 
             // 添加文件到 FormData
             selectedFiles.forEach((file, index) => {
@@ -339,17 +340,51 @@ export function initializeMiddleArea() {
                         if (done) break;
                         
                         const chunk = decoder.decode(value, {stream: true});
-                        accumulatedContent += chunk;
+                        // 处理每个JSON行
+                        const lines = chunk.split('\n').filter(line => line.trim());
+                        for (const line of lines) {
+                            try {
+                                const parts = JSON.parse(line);
+                                // 处理文本和图片内容
+                                parts.forEach(part => {
+                                    if (part.text) {
+                                        accumulatedContent += part.text;
+                                    } else if (part.inlineData) {
+                                        // 处理图片数据
+                                        const imgElement = document.createElement('img');
+                                        imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                                        imgElement.style.maxWidth = '100%';
+                                        imgElement.style.height = 'auto';
+                                        aiMessageElement.appendChild(imgElement);
+                                    }
+                                });
+                            } catch (e) {
+                                console.error('Error parsing JSON chunk:', e);
+                            }
+                        }
                         
-                        // 更新消息内容
-                        aiMessageElement.textContent = accumulatedContent;
+                        // 更新文本内容
+                        if (accumulatedContent) {
+                            aiMessageElement.textContent = accumulatedContent;
+                        }
                         // 滚动到最新消息
                         chatDisplay.scrollTop = chatDisplay.scrollHeight;
                     }
                 } else {
                     // 非流式处理
-                    const aiResponse = await response.json();
-                    aiMessageElement.textContent = aiResponse;
+                    const parts = await response.json();
+                    // 处理文本和图片内容
+                    parts.forEach(part => {
+                        if (part.text) {
+                            aiMessageElement.textContent = part.text;
+                        } else if (part.inlineData) {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                            imgElement.style.maxWidth = '100%';
+                            imgElement.style.height = 'auto';
+                            aiMessageElement.appendChild(imgElement);
+                        }
+                    });
                 }
 
                 // 重置发送按钮图标和控制器
