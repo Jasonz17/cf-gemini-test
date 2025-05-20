@@ -127,6 +127,7 @@ export function initializeMiddleArea() {
                     });
                     filePreviewElement.appendChild(viewButton);
 
+                    // 将文件预览元素添加到消息元素中，但放在文本内容下方
                     messageElement.appendChild(filePreviewElement);
                 } else if (part.inlineData) {
                     const imgElement = document.createElement('img');
