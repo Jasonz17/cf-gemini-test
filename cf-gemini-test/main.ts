@@ -75,6 +75,16 @@ serve(async (req) => {
             }
           } catch (fileProcessError) {
             console.error(`Error processing file ${file.name}:`, fileProcessError);
+            // 尝试打印更详细的错误信息，如果 fileProcessError 是一个 Error 对象
+            if (fileProcessError instanceof Error) {
+                console.error(`Error details: ${fileProcessError.message}`);
+                if (fileProcessError.stack) {
+                    console.error(`Error stack: ${fileProcessError.stack}`);
+                }
+            }
+            // 如果错误对象有其他属性，也可以尝试打印
+            console.error(`Full error object:`, JSON.stringify(fileProcessError, null, 2));
+
             return new Response(`Error processing file: ${file.name}`, { status: 500 });
           }
         }
