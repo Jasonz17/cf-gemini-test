@@ -8,7 +8,7 @@
     margin-bottom: 15px; /* 增加底部15px间隙 */
     display: flex;    flex-direction: column;
     border-radius: 15px; /* 增大圆角 */
-    position: relative; /* Needed for absolute positioning of the button */
+    position: relative;
     box-sizing: border-box;
 }
 
@@ -21,7 +21,7 @@
     margin-bottom: 20px; /* Add some space below the header */
 }
 
-#new-chat-top-button, #toggle-sidebar-button {
+#new-chat-top-button {
     padding: 5px 10px;
     border: none;
     border-radius: 15px;
@@ -33,26 +33,7 @@
     line-height: 20px; /* Adjusted line-height to better center text */
 }
 
-#toggle-sidebar-button span {
-    display: inline-block;
-    transition: transform 0.3s ease;
-}
-
-#left-sidebar.collapsed #toggle-sidebar-button span {
-    transform: rotate(180deg);
-}
-
 #left-sidebar {
-    transition: width 0.3s ease; /* Add transition for smooth collapsing */
-}
-
-#left-sidebar.collapsed {
-    width: 50px; /* Set a smaller width when collapsed */
-    overflow: hidden; /* Hide content that overflows when collapsed */
-}
-
-#left-sidebar.collapsed .sidebar-content {
-    display: none;
 }
 .left-settings {
     /* Add styles for the left sidebar here */
