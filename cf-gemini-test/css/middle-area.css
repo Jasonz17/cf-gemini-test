@@ -183,6 +183,26 @@
 }
 
 
+/* Placeholder styles for chat bubbles and file previews */
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.message.user {
+    background-color: #007bff; /* Placeholder user bubble color */
+    color: white;
+    align-self: flex-end;
+}
+
+.message.ai {
+    background-color: #e9e9eb; /* Placeholder AI bubble color */
+    color: #333;
+    align-self: flex-start;
+}
+
 /* 聊天气泡外下方的文件预览容器样式 */
 .message-file-preview-container {
     display: flex;
