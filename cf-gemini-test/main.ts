@@ -103,6 +103,31 @@ serve(async (req) => {
 
                 // 使用 createPartFromUri 构建文件内容部分
                 contentParts.push(createPartFromUri(uploadResult.uri, uploadResult.mimeType));
+
+                // 等待文件变为 ACTIVE 状态
+                const fileUri = uploadResult.uri;
+                const fileName = uploadResult.name; // Assuming uploadResult contains the file name
+                const startTime = Date.now();
+                const timeout = 60 * 1000; // 1 minute timeout
+
+                console.log(`Waiting for file ${fileName} (${fileUri}) to become ACTIVE...`);
+
+                while (true) {
+                  const fetchedFile = await ai.files.get({ name: fileName });
+                  console.log(`File ${fileName} status: ${fetchedFile.state}`);
+
+                  if (fetchedFile.state === 'ACTIVE') {
+                    console.log(`File ${fileName} is ACTIVE.`);
+                    break; // File is active, exit loop
+                  }
+
+                  if (Date.now() - startTime > timeout) {
+                    throw new Error(`Timeout waiting for file ${fileName} to become ACTIVE.`);
+                  }
+
+                  await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before checking again
+                }
+
               } catch (uploadError) {
                 console.error(`Error uploading large file ${file.name}:`, uploadError);
                 return new Response(`Error uploading file: ${file.name}`, { status: 500 });
