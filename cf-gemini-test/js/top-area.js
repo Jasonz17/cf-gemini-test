@@ -3,7 +3,7 @@
 export function initializeTopArea() {
     const apiKeyInput = document.getElementById('api-key-input');
     const saveApiKeyButton = document.getElementById('save-api-key');
-    const docsButton = document.getElementById('docs-button');
+
 
     // Load API key from localStorage on page load (Temporary, replace with IndexedDB)
     const savedApiKey = localStorage.getItem('apiKey');
@@ -34,11 +34,7 @@ export function initializeTopArea() {
         }
     });
 
-    // Placeholder functionality for Docs button
-    docsButton.addEventListener('click', () => {
-        console.log('Docs button clicked');
-        // TODO: Implement displaying docs page
-    });
+
 
     // TODO: Implement IndexedDB saving and loading
 }
