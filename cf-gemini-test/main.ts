@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { GoogleGenAI, Modality } from "npm:@google/genai"; // 使用正确的库
 import { dirname, fromFileUrl, join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
-import { encode } from "https://deno.land/std@0.224.0/encoding/base64.ts";
+import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
 
 // 获取当前脚本所在的目录
 const __dirname = dirname(fromFileUrl(import.meta.url));
@@ -71,7 +71,7 @@ serve(async (req) => {
             if (file.size <= fileSizeLimit) {
               // 小于等于 20MB，使用 base64 编码
               const fileBuffer = await file.arrayBuffer();
-              const base64Data = encode(new Uint8Array(fileBuffer));
+              const base64Data = encodeBase64(new Uint8Array(fileBuffer));
 
               contents.push({
                 inlineData: {
