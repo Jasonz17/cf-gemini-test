@@ -68,6 +68,12 @@ serve(async (req) => {
           const fileSizeLimit = 20 * 1024 * 1024; // 20MB
 
           try {
+            // 显式检查文件对象和 size 属性
+            if (!file || typeof file.size !== 'number') {
+              console.error(`Invalid file object or missing size property for file ${file.name}:`, file);
+              return new Response(`Error processing file: Invalid file object for ${file.name}`, { status: 500 });
+            }
+
             if (file.size <= fileSizeLimit) {
               // 小于等于 20MB，使用 base64 编码
               const fileBuffer = await file.arrayBuffer();
@@ -82,6 +88,11 @@ serve(async (req) => {
             } else {
               // 大于 20MB，使用文件上传 API
               console.log(`Uploading large file: ${file.name}`);
+              // 显式检查文件对象和 size 属性
+              if (!file || typeof file.size !== 'number') {
+                console.error(`Invalid file object or missing size property for file ${file.name}:`, file);
+                return new Response(`Error processing file: Invalid file object for ${file.name}`, { status: 500 });
+              }
               const uploadResult = await ai.files.upload(file, {
                 mimeType: file.type,
                 displayName: file.name,
