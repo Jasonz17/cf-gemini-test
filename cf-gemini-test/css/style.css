@@ -2,7 +2,7 @@ body {
     font-family: sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0; /* Placeholder background color */
+    background-color: #ffffff; /* 调整为白色，与左侧栏背景色互换 */
 }
 
 #app {
