@@ -1,5 +1,8 @@
 // js/middle-area.js
 
+// 存储选中的文件
+let selectedFiles = [];
+
 export function initializeMiddleArea() {
     const chatDisplay = document.getElementById('chat-display');
     const userInput = document.getElementById('user-input');
@@ -138,6 +141,9 @@ export function initializeMiddleArea() {
         fileInput.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
             files.forEach(file => {
+                // 将文件添加到 selectedFiles 数组
+                selectedFiles.push(file);
+
                 // 检查文件名长度（假设一个中文字符占2个字节）
                 const fileName = file.name;
                 const displayName = fileName.length > 16 ? fileName.substring(0, 16) + '...' : fileName;
@@ -145,6 +151,8 @@ export function initializeMiddleArea() {
                 // 创建预览项容器
                 const previewItem = document.createElement('div');
                 previewItem.className = 'preview-item';
+                // 存储文件对象或其索引，以便移除时使用
+                previewItem.dataset.fileName = fileName; // 使用文件名作为标识
                 
                 if (type === 'image') {
                     // 图片预览
@@ -164,8 +172,9 @@ export function initializeMiddleArea() {
                 removeButton.className = 'remove-file';
                 removeButton.innerHTML = '×';
                 removeButton.addEventListener('click', () => {
+                    // 从 selectedFiles 数组中移除文件
+                    selectedFiles = selectedFiles.filter(f => f.name !== file.name);
                     previewItem.remove();
-                    // 这里可以添加从已选文件列表中移除文件的逻辑
                 });
                 previewItem.appendChild(removeButton);
                 
@@ -178,29 +187,41 @@ export function initializeMiddleArea() {
     // 处理发送消息
     async function handleSendMessage() {
         const messageText = userInput.value.trim();
-        if (messageText) {
-            // 显示用户消息
-            displayMessage({
-                type: 'user',
-                content: messageText
+        
+        // 只有当有文本或有文件时才发送消息
+        if (messageText || selectedFiles.length > 0) {
+            // 显示用户消息 (只显示文本部分)
+            if (messageText) {
+                 displayMessage({
+                    type: 'user',
+                    content: messageText
+                });
+            }
+           
+            // 构建 FormData
+            const formData = new FormData();
+            formData.append('model', 'gemini-2.0-flash'); // 使用默认模型
+            formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw'); // 使用指定的 API 密钥
+            formData.append('input', messageText); // 用户输入作为内容
+
+            // 添加文件到 FormData
+            selectedFiles.forEach((file, index) => {
+                formData.append(`file${index}`, file);
             });
-            // 清空输入框
+
+            // 清空输入框和文件预览
             userInput.value = '';
-            // 重置输入框高度
             adjustInputHeight();
+            filePreviewContainer.innerHTML = ''; // 清空预览容器
+            selectedFiles = []; // 清空文件数组
             
             // 调用后端 API
             try {
                 const response = await fetch('/process', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: 'gemini-2.0-flash', // 使用默认模型
-                        apikey: 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw', // 使用指定的 API 密钥
-                        input: messageText // 用户输入作为内容
-                    })
+                    // 当使用 FormData 时，浏览器会自动设置 Content-Type 为 multipart/form-data
+                    // headers: { 'Content-Type': 'application/json' }, // 不需要手动设置
+                    body: formData
                 });
 
                 if (!response.ok) {
