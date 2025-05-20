@@ -85,6 +85,12 @@
     font-size: 12px;
 }
 
+#model-info {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
 #model-info .value {
     text-align: right;
 }
