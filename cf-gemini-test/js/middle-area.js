@@ -93,23 +93,33 @@ export function initializeMiddleArea() {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', message.type);
 
-        if (Array.isArray(message.content)) { // Check if content is an array of parts
-            message.content.forEach(part => {
-                if (part.text) {
+        // 处理消息内容
+        let content = message.content;
+        if (typeof content === 'string') {
+            // 如果是字符串，直接显示
+            messageElement.textContent = content;
+        } else if (Array.isArray(content)) {
+            // 如果是数组，处理每个部分
+            content.forEach(part => {
+                if (typeof part === 'string') {
+                    const textElement = document.createElement('div');
+                    textElement.textContent = part;
+                    messageElement.appendChild(textElement);
+                } else if (part.text) {
                     const textElement = document.createElement('div');
                     textElement.textContent = part.text;
                     messageElement.appendChild(textElement);
                 } else if (part.inlineData) {
                     const imgElement = document.createElement('img');
                     imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                    imgElement.style.maxWidth = '100%'; // Optional: style the image
-                    imgElement.style.height = 'auto'; // Optional: style the image
+                    imgElement.style.maxWidth = '100%';
+                    imgElement.style.height = 'auto';
                     messageElement.appendChild(imgElement);
                 }
             });
-        } else {
-            // Handle plain text response (for backward compatibility or non-image models)
-            messageElement.textContent = message.content;
+        } else if (typeof content === 'object') {
+            // 如果是对象，尝试提取文本内容
+            messageElement.textContent = content.text || JSON.stringify(content);
         }
 
         chatDisplay.appendChild(messageElement);
