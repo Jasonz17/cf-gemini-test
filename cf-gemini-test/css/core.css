@@ -35,27 +35,7 @@
     margin-top: 5px;
 }
 
-/* Placeholder for Docs page */
-#docs-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
-    z-index: 100;
-    display: none; /* Hidden by default */
-    padding: 20px;
-    overflow-y: auto;
-}
 
-#docs-page .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5em;
-    cursor: pointer;
-}
 
 /* Placeholder for upload options */
 .upload-options {
