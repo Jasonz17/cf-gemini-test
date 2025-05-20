@@ -4,6 +4,19 @@ import { GoogleGenAI } from "npm:@google/genai"; // 使用正确的库
 serve(async (req) => {
   const url = new URL(req.url);
 
+  // 处理根路径的 GET 请求，返回 index.html
+  if (req.method === "GET" && url.pathname === "/") {
+    try {
+      const htmlContent = await Deno.readTextFile("./index.html");
+      return new Response(htmlContent, {
+        headers: { "Content-Type": "text/html" },
+      });
+    } catch (error) {
+      console.error("Error reading index.html:", error);
+      return new Response("Internal Server Error", { status: 500 });
+    }
+  }
+
   // 只处理根路径的 POST 请求
   if (req.method !== "POST" || url.pathname !== "/") {
     return new Response("Not Found", { status: 404 });
