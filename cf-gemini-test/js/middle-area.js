@@ -185,13 +185,38 @@ export function initializeMiddleArea() {
             // 重置输入框高度
             adjustInputHeight();
             
-            // 模拟AI回复
-            setTimeout(() => {
+            // 调用后端 API
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gemini-2.0-flash', // 使用默认模型
+                        apikey: 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw', // 使用指定的 API 密钥
+                        input: messageText // 用户输入作为内容
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                const aiResponseText = await response.text();
                 displayMessage({
                     type: 'ai',
-                    content: `收到您的消息：${messageText}\n这是一条测试回复。`
+                    content: aiResponseText
                 });
-            }, 1000);
+
+            } catch (error) {
+                console.error('Error fetching AI response:', error);
+                displayMessage({
+                    type: 'ai',
+                    content: `发生错误: ${error.message}`
+                });
+            }
         }
     }
     
