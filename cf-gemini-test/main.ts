@@ -92,9 +92,12 @@ serve(async (req) => {
                 const fileBuffer = await file.arrayBuffer();
                 const fileBlob = new Blob([fileBuffer], { type: file.type });
 
-                const uploadResult = await ai.files.upload(fileBlob, {
-                  mimeType: file.type,
-                  displayName: file.name,
+                const uploadResult = await ai.files.upload({
+                  file: fileBlob, // Pass the blob within the 'file' property
+                  config: {
+                    mimeType: file.type,
+                    displayName: file.name,
+                  },
                 });
                 console.log(`Upload complete for ${file.name}, URI: ${uploadResult.file.uri}`);
 
