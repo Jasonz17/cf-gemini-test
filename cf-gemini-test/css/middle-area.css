@@ -264,9 +264,9 @@
 /* 聊天气泡内的文件预览样式 */
 .message.user .chat-file-preview {
     position: relative;
-    /* display: flex; */ /* Remove flex to allow stacking below text */
-    /* align-items: center; */ /* Remove align-items */
-    margin-top: 10px; /* Increase top margin to separate from text */
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -274,7 +274,6 @@
     cursor: pointer;
     overflow: hidden;
     max-width: 200px; /* Limit width */
-    display: block; /* Ensure it takes up its own line */
 }
 
 .message.user .chat-file-preview img {
