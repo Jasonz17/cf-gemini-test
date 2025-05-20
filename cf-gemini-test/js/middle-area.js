@@ -137,8 +137,10 @@ export function initializeMiddleArea() {
         const newFilePreviewContainer = document.createElement('div');
         newFilePreviewContainer.id = 'file-preview-container';
         inputContainer.insertBefore(newFilePreviewContainer, inputContainer.firstChild);
+        // 更新 filePreviewContainer 变量以引用新创建的元素
+        filePreviewContainer = newFilePreviewContainer;
         // 初始隐藏容器
-        newFilePreviewContainer.style.display = 'none';
+        filePreviewContainer.style.display = 'none';
     } else {
          // 初始隐藏容器
         filePreviewContainer.style.display = 'none';
