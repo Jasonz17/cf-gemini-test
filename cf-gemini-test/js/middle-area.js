@@ -144,6 +144,15 @@ export function initializeMiddleArea() {
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
     }
 
+    // 添加流式响应开关按钮的点击事件
+    const streamToggle = document.querySelector('.stream-toggle');
+    if (streamToggle) {
+        streamToggle.addEventListener('click', () => {
+            streamToggle.classList.toggle('active');
+            // 这里可以添加流式响应的状态切换逻辑
+        });
+    }
+
     // 添加发送按钮的点击事件
     const sendButton = document.querySelector('.send-button');
     if (sendButton) {
