@@ -188,9 +188,9 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 10px; /* 与消息内容间隔 */
-    padding-top: 10px;
-    /* border-top: 1px solid #eee; */
+    margin-top: 15px; /* 增加与消息内容间隔 */
+    padding-top: 10px; /* 增加顶部内边距 */
+    border-top: 1px solid #eee; /* 添加顶部边框 */
 }
 
 
