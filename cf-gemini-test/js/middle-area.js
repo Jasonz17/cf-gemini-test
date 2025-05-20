@@ -5,8 +5,11 @@ export function initializeMiddleArea() {
     const userInput = document.getElementById('user-input');
     const inputContainer = document.getElementById('input-container');
     
+    console.log('initializeMiddleArea function called');
+    
     // 获取已存在的工具栏元素
     const toolbarLeft = document.querySelector('.toolbar-left');
+    console.log('toolbarLeft element:', toolbarLeft);
     
     // 定义工具图标和提示信息
     const tooltipTexts = {
@@ -40,6 +43,7 @@ export function initializeMiddleArea() {
     
     // 添加工具图标到左侧容器
     tools.forEach(icon => toolbarLeft.appendChild(icon));
+    console.log('Tool icons appended to toolbarLeft');
     
     // 为每个工具图标添加点击事件
     tools.forEach(icon => {
@@ -172,7 +176,7 @@ export function initializeMiddleArea() {
     }
 
     // 处理发送消息
-    function handleSendMessage() {
+    async function handleSendMessage() {
         const messageText = userInput.value.trim();
         if (messageText) {
             // 显示用户消息
