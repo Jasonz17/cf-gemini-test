@@ -222,6 +222,10 @@ export function initializeMiddleArea() {
                     // 从 selectedFiles 数组中移除文件
                     selectedFiles = selectedFiles.filter(f => f.name !== file.name);
                     previewItem.remove();
+                    // 检查是否还有文件，没有则隐藏预览容器
+                    if (selectedFiles.length === 0) {
+                        filePreviewContainer.style.display = 'none';
+                    }
                 });
                 previewItem.appendChild(removeButton);
                 
