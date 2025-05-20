@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import { GoogleGenAI } from "npm:@google/genai"; // 使用正确的库
+import { GoogleGenAI, Modality } from "npm:@google/genai"; // 使用正确的库
 import { dirname, fromFileUrl, join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 
@@ -116,18 +116,44 @@ serve(async (req) => {
       }
 
       // 调用 Gemini API
+      const config: any = {};
+      if (model === 'gemini-2.0-flash-preview-image-generation') {
+        config.responseModalities = [Modality.TEXT, Modality.IMAGE];
+      }
+
       const result = await ai.models.generateContent({
         model: model.toString(),
         contents: contents,
+        config: config,
       });
 
-      // 获取并返回文本响应
-      // 获取并返回文本响应
-      if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0 && result.candidates[0].content.parts[0].text) {
-        const responseText = result.candidates[0].content.parts[0].text;
-        return new Response(responseText, {
-          headers: { "Content-Type": "text/plain" },
-        });
+      // 处理响应，检查文本和图片部分
+      if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts) {
+        const parts = result.candidates[0].content.parts;
+        let responseContent = '';
+        let imageData = null;
+
+        for (const part of parts) {
+          if (part.text) {
+            responseContent += part.text + '\n';
+          } else if (part.inlineData) {
+            // 找到图片数据，这里只记录，后续需要修改前端来处理
+            console.log('Received image data:', part.inlineData.mimeType);
+            // For now, just indicate that image data was received
+            responseContent += `[Image data received: ${part.inlineData.mimeType}]\n`;
+            imageData = part.inlineData; // Store image data if needed later
+          }
+        }
+
+        if (responseContent) {
+           // Return response content (including placeholder for image)
+           return new Response(responseContent.trim(), {
+             headers: { "Content-Type": "text/plain" },
+           });
+        } else {
+           return new Response("Received empty response from AI", { status: 500 });
+        }
+
       } else {
         console.error("Unexpected API response structure:", JSON.stringify(result, null, 2));
         return new Response("Error: Unexpected API response structure", { status: 500 });
