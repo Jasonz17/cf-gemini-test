@@ -252,10 +252,10 @@ export function initializeMiddleArea() {
                     throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
 
-                const aiResponseText = await response.text();
+                const aiResponse = await response.json();
                 displayMessage({
                     type: 'ai',
-                    content: aiResponseText
+                    content: aiResponse
                 });
 
             } catch (error) {
