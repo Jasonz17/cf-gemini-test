@@ -2,19 +2,19 @@
 
 /* 下部输入区域样式 */
 #middle-area-down {
-    position: sticky;
-    bottom: 0;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     background: white;
-    padding: 15px;
+    padding: 10px;
     border-top: 1px solid #ddd;
-    z-index: 100;
+    margin-top: auto;
 }
 
 #input-container {
     display: flex;
     flex-direction: column;
-    margin: 0;
+    width: 100%;
 }
 
 #file-preview-container {
