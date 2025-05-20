@@ -92,16 +92,13 @@
     resize: none;
     height: auto;
     box-sizing: border-box;
-    /* 自定义滚动条样式 */
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: #ddd;
-        border-radius: 3px;
-    }
-
+}
+#user-input::-webkit-scrollbar {
+    width: 6px;
+}
+#user-input::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 3px;
 }
 
 
@@ -357,10 +354,4 @@
     border-width: 5px;
     border-style: solid;
     border-color: #333 transparent transparent transparent;
-}
-
-
-.toolbar-icon:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
 }
