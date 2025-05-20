@@ -183,14 +183,16 @@
 }
 
 
-/* 聊天气泡内的文件预览容器样式 */
+/* 聊天气泡外下方的文件预览容器样式 */
 .message-file-preview-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 15px; /* 增加与消息内容间隔 */
-    padding-top: 10px; /* 增加顶部内边距 */
-    border-top: 1px solid #eee; /* 添加顶部边框 */
+    margin-top: 10px; /* 调整与消息气泡的间距 */
+    padding: 0; /* 移除多余内边距 */
+    border-top: none; /* 确保无分隔线 */
+    clear: both; /* 清除浮动影响 */
+    width: 100%; /* 占满宽度 */
 }
 
 
