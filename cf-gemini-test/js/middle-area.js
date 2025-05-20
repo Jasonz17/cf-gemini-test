@@ -135,7 +135,8 @@ export function initializeMiddleArea() {
                 }
                 filePreviewContainer.appendChild(previewItem);
             });
-            messageElement.appendChild(filePreviewContainer);
+            // 将文件预览容器添加到聊天显示区域，而不是消息元素内部
+            chatDisplay.appendChild(filePreviewContainer);
         }
 
         // 滚动到最新消息
