@@ -1,99 +1,186 @@
-// js/left-sidebar.js
-
-// Add JavaScript for the left sidebar here
-
-// Model information data
-const modelInfo = {
-    'gemini-2.5-flash-preview-04-17': {
-        maxInputToken: 1048576,
-        maxOutputToken: 65536,
-        rpd: '500 req/day',
-        rpm: '10 RPM',
-        inputTypes: '多模态',
-        outputTypes: '文本'
-    },
-    'gemini-2.0-flash-preview-image-generation': {
-        maxInputToken: 32000,
-        maxOutputToken: 8192,
-        rpd: '1500 req/day',
-        rpm: '10 RPM',
-        inputTypes: '多模态',
-        outputTypes: '文本、图片'
-    },
-    'gemini-2.0-flash': {
-        maxInputToken: 1048576,
-        maxOutputToken: 8192,
-        rpd: '1500 req/day',
-        rpm: '15 RPM',
-        inputTypes: '多模态',
-        outputTypes: '文本'
-    },
-    'gemini-1.5-pro': {
-        maxInputToken: 2097152,
-        maxOutputToken: 8192,
-        rpd: '1500 req/day',
-        rpm: '15 RPM',
-        inputTypes: '多模态',
-        outputTypes: '文本'
-    }
-};
-
-// Function to format number with thousand separators
-function formatNumberWithCommas(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+#left-sidebar {
+    width: 300px;
+    background-color: #ffffff; /* Placeholder background color */
+    padding: 20px;
+    box-shadow: none; /* No shadow */
+    border: none; /* 取消蓝色边框 */
+    margin-left: 15px; /* 增加与左边的缝隙 */
+    margin-bottom: 15px; /* 增加底部15px间隙 */
+    display: flex;    flex-direction: column;
+    border-radius: 15px; /* 增大圆角 */
+    position: relative;
+    box-sizing: border-box;
 }
 
-// Function to update model information display
-function updateModelInfo(selectedModel) {
-    const info = modelInfo[selectedModel]; // Added semicolon here
-        const maxInputTokenElement = document.getElementById('max-input-token');
-        if (maxInputTokenElement) {
-            maxInputTokenElement.textContent = formatNumberWithCommas(info.maxInputToken);
-        }
-        const maxOutputTokenElement = document.getElementById('max-output-token');
-        if (maxOutputTokenElement) {
-            maxOutputTokenElement.textContent = formatNumberWithCommas(info.maxOutputToken);
-        }
-        const rpdElement = document.getElementById('rpd');
-        if (rpdElement) {
-            rpdElement.textContent = info.rpd;
-        }
-        const rpmElement = document.getElementById('rpm');
-        if (rpmElement) {
-            rpmElement.textContent = info.rpm;
-        }
-        const inputTypesElement = document.getElementById('input-types');
-        if (inputTypesElement) {
-            inputTypesElement.textContent = info.inputTypes;
-        }
-        const outputTypesElement = document.getElementById('output-types');
-        if (outputTypesElement) {
-            outputTypesElement.textContent = info.outputTypes;
-        }
-    }
-export function initializeLeftSidebar() {
-    // Event listener for model selection change (assuming a select element with id 'model-select')
-    const modelSelect = document.getElementById('model-select');
-    if (modelSelect) {
-        modelSelect.addEventListener('change', (event) => {
-            updateModelInfo(event.target.value);
-        });
-        // Update info on initial load with the default selected model
-        updateModelInfo(modelSelect.value);
-    }
 
-    // The temperature slider was removed, so no synchronization is needed.
-    // The number input handles min, max, and step constraints via HTML attributes.
+.sidebar-header-buttons {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px; /* Add some space below the header */
+}
 
-    // Add functionality to toggle sidebar visibility
-    const toggleSidebarButton = document.getElementById('toggle-sidebar-button');
-    const leftSidebar = document.getElementById('left-sidebar');
+#new-chat-top-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: #e9e9eb;
+    color: #333;
+    font-size: 0.9em;
+    height: 30px;
+    line-height: 20px; /* Adjusted line-height to better center text */
+}
 
-    if (toggleSidebarButton && leftSidebar) {
-        toggleSidebarButton.addEventListener('click', () => {
-            leftSidebar.classList.toggle('collapsed');
-            const isCollapsed = leftSidebar.classList.contains('collapsed');
-            toggleSidebarButton.querySelector('span').textContent = isCollapsed ? '>' : '<';
-        });
-    }
+#left-sidebar {
+}
+.left-settings {
+    /* Add styles for the left sidebar here */
+
+/* Model selection box beautification */
+#model-select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px; /* 增加与上方模型的间距 */
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px; /* 增加选择框高度 */
+    font-size: 16px; /* 增大内部字体（原14px+1号） */
+}
+
+/* Font size reduction for model info labels */
+.left-settings .setting-group label {
+    font-size: 10px !important;
+}
+
+/* Temperature slider and input styling */
+.temperature-setting {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.temperature-setting label {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.temperature-setting input[type="range"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.temperature-setting input[type="number"] {
+    width: 50px; /* Adjust width as needed */
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    text-align: right;
+    /* Hide spin buttons */
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.temperature-setting input[type="number"]::-webkit-outer-spin-button,
+.temperature-setting input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+}
+
+}
+
+.setting-group {
+    margin-bottom: 15px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px; /* Increased margin */
+    font-weight: bold;
+}
+
+#model-select {
+    width: 100%; /* Adjust width to fit container */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+
+#model-info p {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+#model-info .value {
+    text-align: right;
+}
+
+/* Styles for the toggle switch */
+.streaming-setting {
+    display: flex;
+    justify-content: space-between; /* Space out label and toggle */
+    align-items: center;
+}
+
+.streaming-setting label {
+    margin-right: 10px;
+    display: inline-block; /* Allow label and toggle on same line */
+    font-weight: bold;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Increased height */
+    width: 18px; /* Increased width */
+    left: 1px; /* Adjusted position */
+    top: 1px; /* Adjusted position for vertical centering */
+    bottom: 1px; /* Adjusted position for vertical centering */
+    margin: auto 0; /* Auto margins for vertical centering */
+    background-color: black; /* Set circle color to black */
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + label {
+    background-color: #007bff;
+}
+
+.toggle-switch input:focus + label {
+    box-shadow: 0 0 1px #007bff;
+}
+
+.toggle-switch input:checked + label:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
 }
