@@ -122,11 +122,51 @@ serve(async (req) => {
         config.responseModalities = [Modality.TEXT, Modality.IMAGE];
       }
 
-      const result = await ai.models.generateContent({
-        model: model.toString(),
-        contents: contents,
-        config: config,
-      });
+      // 检查是否启用流式响应
+      const streamEnabled = formData.get('stream') === 'true';
+      
+      if (streamEnabled) {
+        // 流式响应处理
+        const stream = await ai.models.generateContentStream({
+          model: model.toString(),
+          contents: contents,
+          config: config,
+        });
+
+        // 设置响应头，使用Transfer-Encoding: chunked
+        const encoder = new TextEncoder();
+        const body = new ReadableStream({
+          async start(controller) {
+            try {
+              for await (const chunk of stream) {
+                if (chunk.candidates && chunk.candidates[0]?.content?.parts) {
+                  // 将每个块转换为JSON字符串并发送
+                  controller.enqueue(encoder.encode(JSON.stringify(chunk.candidates[0].content.parts) + '\n'));
+                }
+              }
+              controller.close();
+            } catch (error) {
+              controller.error(error);
+            }
+          }
+        });
+
+        return new Response(body, {
+          headers: {
+            'Content-Type': 'application/x-ndjson',
+            'Transfer-Encoding': 'chunked',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+          }
+        });
+      } else {
+        // 非流式响应处理
+        const result = await ai.models.generateContent({
+          model: model.toString(),
+          contents: contents,
+          config: config,
+        });
+      }
 
       // 处理响应，检查文本和图片部分
       if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts) {
