@@ -82,7 +82,7 @@
     margin: 5px 0;
     display: flex;
     justify-content: space-between;
-    font-size: 10px; /* 减小字体（原12px-1号） */
+    font-size: 12px; 
 }
 
 #model-info .value {
