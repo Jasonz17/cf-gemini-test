@@ -198,6 +198,16 @@ export function initializeMiddleArea() {
                 // 创建预览项容器
                 const previewItem = document.createElement('div');
                 previewItem.className = 'preview-item';
+
+                // 检测内容是否换行并调整边距
+                function checkContentWrap() {
+                    const container = document.getElementById('file-preview-container');
+                    if (!container) return;
+                    const isWrapped = container.scrollWidth > container.clientWidth;
+                    container.style.marginBottom = isWrapped ? '10px' : '0';
+                }
+                // 添加文件后触发检测
+                setTimeout(checkContentWrap, 0); // 等待DOM更新
                 // 存储文件对象或其索引，以便移除时使用
                 previewItem.dataset.fileName = fileName; // 使用文件名作为标识
                 
