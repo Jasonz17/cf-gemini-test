@@ -1,285 +1,203 @@
-// js/middle-area.js
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { GoogleGenAI, Modality } from "npm:@google/genai"; // 使用正确的库
+import { dirname, fromFileUrl, join } from "https://deno.land/std@0.224.0/path/mod.ts";
+import { serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 
-// 存储选中的文件
-let selectedFiles = [];
+// 获取当前脚本所在的目录
+const __dirname = dirname(fromFileUrl(import.meta.url));
 
-export function initializeMiddleArea() {
-    const chatDisplay = document.getElementById('chat-display');
-    const userInput = document.getElementById('user-input');
-    const inputContainer = document.getElementById('input-container');
-    
-    console.log('initializeMiddleArea function called');
-    
-    // 获取已存在的工具栏元素
-    const toolbarLeft = document.querySelector('.toolbar-left');
-    console.log('toolbarLeft element:', toolbarLeft);
-    
-    // 定义工具图标和提示信息
-    const tooltipTexts = {
-        'image': '格式支持：PNG, JPEG, WEBP, HEIC, HEIF',
-        'document': '格式支持：PDF, TXT, Markdown, CSV, XML',
-        'code': '格式支持：JavaScript, Python, HTML, CSS, Markdown, XML',
-        'audio': '格式支持：WAV, MP3, AIFF, AAC, OGG Vorbis, FLAC',
-        'video': '格式支持：MP4, MPEG, MOV, AVI, X-FLV, WMV, 3GPP, WEBM'
-    };
-    
-    const tools = ['image', 'document', 'code', 'audio', 'video'].map(type => {
-        const icon = document.createElement('button');
-        icon.className = 'toolbar-icon';
-        icon.type = 'button';
-        icon.setAttribute('data-type', type);
-        
-        // 创建提示元素
-        const tooltip = document.createElement('span');
-        tooltip.className = 'tooltip';
-        tooltip.textContent = tooltipTexts[type];
-        
-        icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            ${getIconPath(type)}
-        </svg>`;
-        
-        // 添加提示元素到图标
-        icon.appendChild(tooltip);
-        
-        return icon;
-    });
-    
-    // 添加工具图标到左侧容器
-    tools.forEach(icon => toolbarLeft.appendChild(icon));
-    console.log('Tool icons appended to toolbarLeft');
-    
-    // 为每个工具图标添加点击事件
-    tools.forEach(icon => {
-        icon.addEventListener('click', () => {
-            const type = icon.getAttribute('data-type');
-            console.log(`${type} button clicked`);
-            handleToolClick(type);
-        });
-    });
+serve(async (req) => {
+  const url = new URL(req.url);
+  const pathname = url.pathname;
 
-    // 添加默认欢迎消息
-    const welcomeMessage = {
-        type: 'ai',
-        content: '你好！我是AI助手，很高兴为您服务。请问有什么我可以帮您的吗？'
-    };
-    displayMessage(welcomeMessage);
-
-    // 输入框高度自动调整逻辑
-    function adjustInputHeight() {
-        // 重置高度以正确计算scrollHeight
-        userInput.style.height = 'auto';
-        // 获取最大高度限制
-        const maxHeight = parseInt(getComputedStyle(userInput).maxHeight, 10);
-        console.log('当前maxHeight:', maxHeight); // 调试日志
-        // 计算高度（最小40px，不超过maxHeight）
-        const calculatedHeight = Math.max(userInput.scrollHeight, 40);
-        console.log('当前scrollHeight:', userInput.scrollHeight, 'calculatedHeight:', calculatedHeight); // 调试日志
-        userInput.style.height = Math.min(calculatedHeight, maxHeight) + 'px';
-        console.log('最终设置高度:', userInput.style.height); // 调试日志
-        // 控制滚动条显示：当内容超过最大高度时显示
-        userInput.style.overflowY = calculatedHeight >= maxHeight ? 'auto' : 'hidden';
-        // 自动滚动到底部
-        userInput.scrollTop = userInput.scrollHeight;
+  // --- 1. 处理 API 代理请求 ---
+  // 只处理 /process 的 POST 请求
+  if (pathname === "/process") {
+    if (req.method !== "POST") {
+      return new Response("Method Not Allowed", { status: 405 });
     }
 
-    // 初始化时调整一次高度
-    adjustInputHeight();
+    try {
+      // 解析 FormData
+      const formData = await req.formData();
+      const model = formData.get('model');
+      const apikey = formData.get('apikey');
+      const inputText = formData.get('input');
 
-    // 监听输入事件调整高度
-    userInput.addEventListener('input', adjustInputHeight);
+      if (!model || !apikey) {
+        return new Response("Missing model or apikey in request body", { status: 400 });
+      }
 
-    // 显示消息的函数
-    function displayMessage(message) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message', message.type);
+      const ai = new GoogleGenAI({ apiKey: apikey.toString() });
 
-        if (Array.isArray(message.content)) { // Check if content is an array of parts
-            message.content.forEach(part => {
-                if (part.text) {
-                    const textElement = document.createElement('div');
-                    textElement.textContent = part.text;
-                    messageElement.appendChild(textElement);
-                } else if (part.inlineData) {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                    imgElement.style.maxWidth = '100%'; // Optional: style the image
-                    imgElement.style.height = 'auto'; // Optional: style the image
-                    messageElement.appendChild(imgElement);
+      // 构建内容数组
+      const contents = [];
+
+      // 检查输入是否为图片 URL
+      const imageUrlRegex = /^(http(s?):)([/|.][\w\s-])*\.(?:jpg|jpeg|gif|png|webp|heic|heif)$/i;
+      if (inputText && imageUrlRegex.test(inputText.toString())) {
+        // 如果是图片 URL，添加到 contents 数组
+        const imageUrl = inputText.toString();
+        // 尝试从 URL 推断 MIME 类型，或者使用默认值
+        const mimeType = imageUrl.split('.').pop()?.toLowerCase() === 'jpg' ? 'image/jpeg' :
+                         imageUrl.split('.').pop()?.toLowerCase() === 'jpeg' ? 'image/jpeg' :
+                         imageUrl.split('.').pop()?.toLowerCase() === 'png' ? 'image/png' :
+                         imageUrl.split('.').pop()?.toLowerCase() === 'gif' ? 'image/gif' :
+                         imageUrl.split('.').pop()?.toLowerCase() === 'webp' ? 'image/webp' :
+                         imageUrl.split('.').pop()?.toLowerCase() === 'heic' ? 'image/heic' :
+                         imageUrl.split('.').pop()?.toLowerCase() === 'heif' ? 'image/heif' :
+                         'image/*'; // 默认或未知类型
+
+        contents.push({
+          fileData: {
+            mimeType: mimeType,
+            uri: imageUrl,
+          },
+        });
+      } else if (inputText) {
+        // 如果不是图片 URL，作为文本添加
+        contents.push({ text: inputText.toString() });
+      }
+
+      // 添加文件部分 (处理上传的文件)
+      const fileEntries = Array.from(formData.entries()).filter(([key, value]) => value instanceof File);
+
+      for (const [key, file] of fileEntries) {
+        if (file instanceof File) {
+          const fileSizeLimit = 20 * 1024 * 1024; // 20MB
+
+          try {
+            if (file.size <= fileSizeLimit) {
+              // 小于等于 20MB，使用 base64 编码
+              // 小于等于 20MB，使用 base64 编码
+              const fileBuffer = await file.arrayBuffer();
+              // 使用 TextDecoder 和 btoa 进行 base64 编码，避免栈溢出
+              const uint8Array = new Uint8Array(fileBuffer);
+              let binaryString = '';
+              for (let i = 0; i < uint8Array.length; i++) {
+                binaryString += String.fromCharCode(uint8Array[i]);
+              }
+              const base64Data = btoa(binaryString);
+
+              contents.push({
+                inlineData: {
+                  mimeType: file.type,
+                  data: base64Data,
+                },
+              });
+            } else {
+              // 大于 20MB，使用文件上传 API
+              console.log(`Uploading large file: ${file.name}`);
+              const uploadResult = await ai.uploadFile(file, {
+                mimeType: file.type,
+                displayName: file.name,
+              });
+              console.log(`Upload complete for ${file.name}, URI: ${uploadResult.file.uri}`);
+
+              contents.push({
+                fileData: {
+                  mimeType: file.type,
+                  uri: uploadResult.file.uri,
+                },
+              });
+            }
+          } catch (fileProcessError) {
+            console.error(`Error processing file ${file.name}:`, fileProcessError);
+            // 尝试打印更详细的错误信息，如果 fileProcessError 是一个 Error 对象
+            if (fileProcessError instanceof Error) {
+                console.error(`Error details: ${fileProcessError.message}`);
+                if (fileProcessError.stack) {
+                    console.error(`Error stack: ${fileProcessError.stack}`);
                 }
-            });
+            }
+            // 如果错误对象有其他属性，也可以尝试打印
+            console.error(`Full error object:`, JSON.stringify(fileProcessError, null, 2));
+
+            return new Response(`Error processing file: ${file.name}`, { status: 500 });
+          }
+        }
+      }
+
+      if (contents.length === 0) {
+         return new Response("No text or files provided", { status: 400 });
+      }
+
+      // 调用 Gemini API
+      const config: any = {};
+      if (model === 'gemini-2.0-flash-preview-image-generation') {
+        config.responseModalities = [Modality.TEXT, Modality.IMAGE];
+      }
+
+      const result = await ai.models.generateContent({
+        model: model.toString(),
+        contents: contents,
+        config: config,
+      });
+
+      // 处理响应，检查文本和图片部分
+      if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts) {
+        const parts = result.candidates[0].content.parts;
+        let responseContent = '';
+        let imageData = null;
+
+        for (const part of parts) {
+          if (part.text) {
+            responseContent += part.text + '\n';
+          } else if (part.inlineData) {
+            // 找到图片数据，这里只记录，后续需要修改前端来处理
+            console.log('Received image data:', part.inlineData.mimeType);
+            // For now, just indicate that image data was received
+            responseContent += `[Image data received: ${part.inlineData.mimeType}]\n`;
+            imageData = part.inlineData; // Store image data if needed later
+          }
+        }
+
+        if (parts.length > 0) {
+           // Return the parts array as JSON
+           return new Response(JSON.stringify(parts), {
+             headers: { "Content-Type": "application/json" },
+           });
         } else {
-            // Handle plain text response (for backward compatibility or non-image models)
-            messageElement.textContent = message.content;
+           return new Response("Received empty response from AI", { status: 500 });
         }
 
-        chatDisplay.appendChild(messageElement);
-        // 滚动到最新消息
-        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      } else {
+        console.error("Unexpected API response structure:", JSON.stringify(result, null, 2));
+        return new Response("Error: Unexpected API response structure", { status: 500 });
+      }
+
+    } catch (error) {
+      console.error("Error processing request:", error);
+      return new Response(`Error: ${error.message}`, { status: 500 });
     }
+  }
 
-    // 添加发送按钮的点击事件
-    const sendButton = document.querySelector('.send-button');
-    if (sendButton) {
-        sendButton.addEventListener('click', handleSendMessage);
+  // --- 2. 处理静态文件请求 ---
+  // 如果请求路径不是 /process，尝试将其作为静态文件来服务
+  try {
+    // 将根路径 '/' 映射到 'index.html'，其他路径移除开头的 '/'
+    const filename = pathname === '/' ? 'index.html' : pathname.substring(1);
+    // 构建文件在文件系统中的完整路径
+    const filePath = join(__dirname, filename);
+
+    // 使用 serveFile 实用函数来处理文件服务。
+    // serveFile 会自动处理文件读取、MIME类型设置、Etag缓存等。
+    // 如果文件存在并成功读取，它会返回一个 Response 对象。
+    // 如果文件不存在，它会抛出一个 NotFound 错误。
+    console.log(`Attempting to serve static file: ${filePath}`);
+    const fileResponse = await serveFile(req, filePath); // Use the original request object
+    console.log(`Served static file: ${filePath}`);
+    return fileResponse;
+  } catch (error) {
+    // If serveFile throws NotFound error or other errors (like permission issues)
+    // Return 404 Not Found for NotFound errors specifically
+    if (error instanceof Deno.errors.NotFound) {
+      console.warn(`Static file not found: ${pathname}`);
+      return new Response("Not Found", { status: 404 });
+    } else {
+      // Log other errors and return 500
+      console.error(`Error serving static file ${pathname}:`, error);
+      return new Response("Internal Server Error", { status: 500 });
     }
-
-    // 添加键盘事件监听
-    userInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    });
-
-    // 创建文件预览容器
-    const filePreviewContainer = document.createElement('div');
-    filePreviewContainer.id = 'file-preview-container';
-    inputContainer.insertBefore(filePreviewContainer, inputContainer.firstChild);
-
-    // 文件类型映射
-    const fileTypeMap = {
-        'image': '.png,.jpg,.jpeg,.webp,.heic,.heif',
-        'document': '.pdf,.txt,.md,.csv,.xml',
-        'code': '.js,.py,.html,.css,.md,.xml',
-        'audio': '.wav,.mp3,.aiff,.aac,.ogg,.flac',
-        'video': '.mp4,.mpeg,.mov,.avi,.flv,.wmv,.3gp,.webm'
-    };
-
-    // 处理工具按钮点击
-    function handleToolClick(type) {
-        // 创建文件输入元素
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = fileTypeMap[type];
-        fileInput.multiple = true;
-        
-        // 触发文件选择
-        fileInput.click();
-        
-        // 处理文件选择
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            files.forEach(file => {
-                // 将文件添加到 selectedFiles 数组
-                selectedFiles.push(file);
-
-                // 检查文件名长度（假设一个中文字符占2个字节）
-                const fileName = file.name;
-                const displayName = fileName.length > 16 ? fileName.substring(0, 16) + '...' : fileName;
-                
-                // 创建预览项容器
-                const previewItem = document.createElement('div');
-                previewItem.className = 'preview-item';
-                // 存储文件对象或其索引，以便移除时使用
-                previewItem.dataset.fileName = fileName; // 使用文件名作为标识
-                
-                if (type === 'image') {
-                    // 图片预览
-                    const img = document.createElement('img');
-                    img.src = URL.createObjectURL(file);
-                    previewItem.appendChild(img);
-                } else {
-                    // 文件名显示
-                    const fileNameDiv = document.createElement('div');
-                    fileNameDiv.className = 'file-name';
-                    fileNameDiv.textContent = displayName;
-                    previewItem.appendChild(fileNameDiv);
-                }
-                
-                // 添加删除按钮
-                const removeButton = document.createElement('div');
-                removeButton.className = 'remove-file';
-                removeButton.innerHTML = '×';
-                removeButton.addEventListener('click', () => {
-                    // 从 selectedFiles 数组中移除文件
-                    selectedFiles = selectedFiles.filter(f => f.name !== file.name);
-                    previewItem.remove();
-                });
-                previewItem.appendChild(removeButton);
-                
-                // 添加到预览容器
-                filePreviewContainer.appendChild(previewItem);
-            });
-        });
-    }
-
-    // 处理发送消息
-    async function handleSendMessage() {
-        const messageText = userInput.value.trim();
-        
-        // 只有当有文本或有文件时才发送消息
-        if (messageText || selectedFiles.length > 0) {
-            // 显示用户消息 (只显示文本部分)
-            if (messageText) {
-                 displayMessage({
-                    type: 'user',
-                    content: messageText
-                });
-            }
-           
-            // 获取选中的模型
-            const modelSelect = document.getElementById('model-select');
-            const selectedModel = modelSelect.value;
-
-            // 构建 FormData
-            const formData = new FormData();
-            formData.append('model', selectedModel); // 使用选中的模型
-            formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw'); // 使用指定的 API 密钥
-            formData.append('input', messageText); // 用户输入作为内容
-
-            // 添加文件到 FormData
-            selectedFiles.forEach((file, index) => {
-                formData.append(`file${index}`, file);
-            });
-
-            // 清空输入框和文件预览
-            userInput.value = '';
-            adjustInputHeight();
-            filePreviewContainer.innerHTML = ''; // 清空预览容器
-            selectedFiles = []; // 清空文件数组
-            
-            // 调用后端 API
-            try {
-                const response = await fetch('/process', {
-                    method: 'POST',
-                    // 当使用 FormData 时，浏览器会自动设置 Content-Type 为 multipart/form-data
-                    // headers: { 'Content-Type': 'application/json' }, // 不需要手动设置
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                }
-
-                const aiResponse = await response.json();
-                displayMessage({
-                    type: 'ai',
-                    content: aiResponse
-                });
-
-            } catch (error) {
-                console.error('Error fetching AI response:', error);
-                displayMessage({
-                    type: 'ai',
-                    content: `发生错误: ${error.message}`
-                });
-            }
-        }
-    }
-    
-    // 获取SVG图标路径
-    function getIconPath(type) {
-        const paths = {
-            image: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
-            document: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>',
-            code: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
-            audio: '<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>',
-            video: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>'            
-        };
-        return paths[type] || '';
-    }
-
-    // TODO: Implement displaying chat messages
-    // TODO: Implement handling file previews
-}
+  }
+});
