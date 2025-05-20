@@ -92,7 +92,26 @@ export function initializeMiddleArea() {
     function displayMessage(message) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', message.type);
-        messageElement.textContent = message.content;
+
+        if (Array.isArray(message.content)) { // Check if content is an array of parts
+            message.content.forEach(part => {
+                if (part.text) {
+                    const textElement = document.createElement('div');
+                    textElement.textContent = part.text;
+                    messageElement.appendChild(textElement);
+                } else if (part.inlineData) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                    imgElement.style.maxWidth = '100%'; // Optional: style the image
+                    imgElement.style.height = 'auto'; // Optional: style the image
+                    messageElement.appendChild(imgElement);
+                }
+            });
+        } else {
+            // Handle plain text response (for backward compatibility or non-image models)
+            messageElement.textContent = message.content;
+        }
+
         chatDisplay.appendChild(messageElement);
         // 滚动到最新消息
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
