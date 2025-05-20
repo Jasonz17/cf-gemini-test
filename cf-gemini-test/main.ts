@@ -166,6 +166,17 @@ serve(async (req) => {
           contents: contents,
           config: config,
         });
+        
+        // 处理响应，检查文本和图片部分
+        if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts) {
+          const parts = result.candidates[0].content.parts;
+          return new Response(JSON.stringify(parts), {
+            headers: { "Content-Type": "application/json" },
+          });
+        } else {
+          console.error("Unexpected API response structure:", JSON.stringify(result, null, 2));
+          return new Response("Error: Unexpected API response structure", { status: 500 });
+        }
       }
 
       // 处理响应，检查文本和图片部分
