@@ -18,20 +18,66 @@ serve(async (req) => {
     }
 
     try {
-      const { model, apikey, input } = await req.json();
+      // 解析 FormData
+      const formData = await req.formData();
+      const model = formData.get('model');
+      const apikey = formData.get('apikey');
+      const inputText = formData.get('input');
 
-      if (!model || !apikey || !input) {
-        return new Response("Missing model, apikey, or input in request body", { status: 400 });
+      if (!model || !apikey) {
+        return new Response("Missing model or apikey in request body", { status: 400 });
       }
 
-      const ai = new GoogleGenAI({ apiKey: apikey });
+      const ai = new GoogleGenAI({ apiKey: apikey.toString() });
 
-      const response = await ai.models.generateContent({
-        model: model,
-        contents: input,
+      // 构建内容数组
+      const contents = [];
+
+      // 添加文本部分
+      if (inputText) {
+        contents.push({ text: inputText.toString() });
+      }
+
+      // 添加文件部分
+      const fileEntries = Array.from(formData.entries()).filter(([key, value]) => value instanceof File);
+
+      for (const [key, file] of fileEntries) {
+        if (file instanceof File) {
+          try {
+            // 将文件上传到 Google AI Platform
+            const uploadedFile = await ai.files.upload({
+              file: file,
+            });
+            console.log(`Uploaded file ${file.name} with URI: ${uploadedFile.uri}`);
+
+            // 创建文件内容部分
+            contents.push({
+              fileData: {
+                mimeType: uploadedFile.mimeType,
+                uri: uploadedFile.uri,
+              },
+            });
+          } catch (uploadError) {
+            console.error(`Error uploading file ${file.name}:`, uploadError);
+            return new Response(`Error uploading file: ${file.name}`, { status: 500 });
+          }
+        }
+      }
+
+      if (contents.length === 0) {
+         return new Response("No text or files provided", { status: 400 });
+      }
+
+      // 调用 Gemini API
+      const result = await ai.models.generateContent({
+        model: model.toString(),
+        contents: contents,
       });
 
-      return new Response(response.text, {
+      // 获取并返回文本响应
+      const responseText = result.response.text();
+
+      return new Response(responseText, {
         headers: { "Content-Type": "text/plain" },
       });
 
