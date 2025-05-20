@@ -135,8 +135,8 @@ export function initializeMiddleArea() {
                 }
                 filePreviewContainer.appendChild(previewItem);
             });
-            // 将文件预览容器添加到聊天显示区域，而不是消息元素内部
-            chatDisplay.appendChild(filePreviewContainer);
+            // 将文件预览容器添加到消息元素内部
+            messageElement.appendChild(filePreviewContainer);
         }
 
         // 滚动到最新消息
@@ -160,6 +160,7 @@ export function initializeMiddleArea() {
     // 创建文件预览容器
     const filePreviewContainer = document.createElement('div');
     filePreviewContainer.id = 'file-preview-container';
+    filePreviewContainer.style.display = 'none'; // 初始隐藏
     inputContainer.insertBefore(filePreviewContainer, inputContainer.firstChild);
 
     // 文件类型映射
