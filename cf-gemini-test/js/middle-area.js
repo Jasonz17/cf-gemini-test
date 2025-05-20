@@ -316,7 +316,7 @@ export function initializeMiddleArea() {
             chatDisplay.appendChild(aiMessageElement);
 
             // 获取流式响应状态
-            const streamToggleStatus = streamToggle && streamToggle.classList.contains('active');
+            const streamToggleStatus = isStreamMode;
 
             // 调用后端 API
             try {
