@@ -1,14 +1,1 @@
-/* Placeholder styles for chat bubbles and file previews */
-.message {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 80%;
-}
-
-.message.user {
-    background-color: #007bff; /* Placeholder user bubble color */
-    color: white;
-    align-self: flex-end;
-}
 
