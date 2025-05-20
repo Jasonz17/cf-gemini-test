@@ -278,6 +278,8 @@ export function initializeMiddleArea() {
                 });
             }
            
+
+
             // 获取选中的模型
             const modelSelect = document.getElementById('model-select');
             const selectedModel = modelSelect.value;
@@ -315,8 +317,7 @@ export function initializeMiddleArea() {
             aiMessageElement.classList.add('message', 'ai');
             chatDisplay.appendChild(aiMessageElement);
 
-            // 获取流式响应状态
-            const streamToggleStatus = isStreamMode;
+
 
             // 调用后端 API
             try {
