@@ -217,9 +217,13 @@ export function initializeMiddleArea() {
                 });
             }
            
+            // 获取选中的模型
+            const modelSelect = document.getElementById('model-select');
+            const selectedModel = modelSelect.value;
+
             // 构建 FormData
             const formData = new FormData();
-            formData.append('model', 'gemini-2.0-flash'); // 使用默认模型
+            formData.append('model', selectedModel); // 使用选中的模型
             formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw'); // 使用指定的 API 密钥
             formData.append('input', messageText); // 用户输入作为内容
 
