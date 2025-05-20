@@ -7,7 +7,7 @@ export function initializeMiddleArea() {
     const chatDisplay = document.getElementById('chat-display');
     const userInput = document.getElementById('user-input');
     const inputContainer = document.getElementById('input-container');
-    const filePreviewContainer = document.getElementById('file-preview-container'); // 获取文件预览容器
+    let filePreviewContainer = document.getElementById('file-preview-container'); // 获取文件预览容器
 
     console.log('initializeMiddleArea function called');
 
