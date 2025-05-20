@@ -7,13 +7,14 @@ export function initializeMiddleArea() {
     const chatDisplay = document.getElementById('chat-display');
     const userInput = document.getElementById('user-input');
     const inputContainer = document.getElementById('input-container');
-    
+    const filePreviewContainer = document.getElementById('file-preview-container'); // 获取文件预览容器
+
     console.log('initializeMiddleArea function called');
-    
+
     // 获取已存在的工具栏元素
     const toolbarLeft = document.querySelector('.toolbar-left');
     console.log('toolbarLeft element:', toolbarLeft);
-    
+
     // 定义工具图标和提示信息
     const tooltipTexts = {
         'image': '格式支持：PNG, JPEG, WEBP, HEIC, HEIF',
@@ -22,32 +23,32 @@ export function initializeMiddleArea() {
         'audio': '格式支持：WAV, MP3, AIFF, AAC, OGG Vorbis, FLAC',
         'video': '格式支持：MP4, MPEG, MOV, AVI, X-FLV, WMV, 3GPP, WEBM'
     };
-    
+
     const tools = ['image', 'document', 'code', 'audio', 'video'].map(type => {
         const icon = document.createElement('button');
         icon.className = 'toolbar-icon';
         icon.type = 'button';
         icon.setAttribute('data-type', type);
-        
+
         // 创建提示元素
         const tooltip = document.createElement('span');
         tooltip.className = 'tooltip';
         tooltip.textContent = tooltipTexts[type];
-        
+
         icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             ${getIconPath(type)}
         </svg>`;
-        
+
         // 添加提示元素到图标
         icon.appendChild(tooltip);
-        
+
         return icon;
     });
-    
+
     // 添加工具图标到左侧容器
     tools.forEach(icon => toolbarLeft.appendChild(icon));
     console.log('Tool icons appended to toolbarLeft');
-    
+
     // 为每个工具图标添加点击事件
     tools.forEach(icon => {
         icon.addEventListener('click', () => {
@@ -131,10 +132,17 @@ export function initializeMiddleArea() {
         }
     });
 
-    // 创建文件预览容器
-    const filePreviewContainer = document.createElement('div');
-    filePreviewContainer.id = 'file-preview-container';
-    inputContainer.insertBefore(filePreviewContainer, inputContainer.firstChild);
+    // 创建文件预览容器 (如果不存在)
+    if (!filePreviewContainer) {
+        const newFilePreviewContainer = document.createElement('div');
+        newFilePreviewContainer.id = 'file-preview-container';
+        inputContainer.insertBefore(newFilePreviewContainer, inputContainer.firstChild);
+        // 初始隐藏容器
+        newFilePreviewContainer.style.display = 'none';
+    } else {
+         // 初始隐藏容器
+        filePreviewContainer.style.display = 'none';
+    }
 
     // 文件类型映射
     const fileTypeMap = {
@@ -152,10 +160,10 @@ export function initializeMiddleArea() {
         fileInput.type = 'file';
         fileInput.accept = fileTypeMap[type];
         fileInput.multiple = true;
-        
+
         // 触发文件选择
         fileInput.click();
-        
+
         // 处理文件选择
         fileInput.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
@@ -166,13 +174,13 @@ export function initializeMiddleArea() {
                 // 检查文件名长度（假设一个中文字符占2个字节）
                 const fileName = file.name;
                 const displayName = fileName.length > 16 ? fileName.substring(0, 16) + '...' : fileName;
-                
+
                 // 创建预览项容器
                 const previewItem = document.createElement('div');
                 previewItem.className = 'preview-item';
                 // 存储文件对象或其索引，以便移除时使用
                 previewItem.dataset.fileName = fileName; // 使用文件名作为标识
-                
+
                 if (type === 'image') {
                     // 图片预览
                     const img = document.createElement('img');
@@ -185,7 +193,7 @@ export function initializeMiddleArea() {
                     fileNameDiv.textContent = displayName;
                     previewItem.appendChild(fileNameDiv);
                 }
-                
+
                 // 添加删除按钮
                 const removeButton = document.createElement('div');
                 removeButton.className = 'remove-file';
@@ -194,19 +202,27 @@ export function initializeMiddleArea() {
                     // 从 selectedFiles 数组中移除文件
                     selectedFiles = selectedFiles.filter(f => f.name !== file.name);
                     previewItem.remove();
+                    // 如果文件列表为空，隐藏预览容器
+                    if (selectedFiles.length === 0) {
+                        filePreviewContainer.style.display = 'none';
+                    }
                 });
                 previewItem.appendChild(removeButton);
-                
+
                 // 添加到预览容器
                 filePreviewContainer.appendChild(previewItem);
             });
+            // 如果文件列表不为空，显示预览容器
+            if (selectedFiles.length > 0) {
+                filePreviewContainer.style.display = 'flex';
+            }
         });
     }
 
     // 处理发送消息
     async function handleSendMessage() {
         const messageText = userInput.value.trim();
-        
+
         // 只有当有文本或有文件时才发送消息
         if (messageText || selectedFiles.length > 0) {
             // 显示用户消息 (只显示文本部分)
@@ -216,7 +232,7 @@ export function initializeMiddleArea() {
                     content: messageText
                 });
             }
-           
+
             // 获取选中的模型
             const modelSelect = document.getElementById('model-select');
             const selectedModel = modelSelect.value;
@@ -239,7 +255,9 @@ export function initializeMiddleArea() {
             adjustInputHeight();
             filePreviewContainer.innerHTML = ''; // 清空预览容器
             selectedFiles = []; // 清空文件数组
-            
+            // 清空文件后隐藏预览容器
+            filePreviewContainer.style.display = 'none';
+
             // 禁用发送按钮并显示加载状态
             sendButton.disabled = true;
             sendButton.classList.add('loading'); // 添加一个loading class用于样式控制
@@ -277,7 +295,7 @@ export function initializeMiddleArea() {
             }
         }
     }
-    
+
     // 获取SVG图标路径
     function getIconPath(type) {
         const paths = {
