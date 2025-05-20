@@ -148,7 +148,7 @@ export function initializeMiddleArea() {
     // 处理工具按钮点击
     function handleToolClick(type) {
         // 创建文件输入元素
-        const fileInput = null;
+        const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = fileTypeMap[type];
         fileInput.multiple = true;
