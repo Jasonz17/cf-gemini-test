@@ -18,11 +18,15 @@
 }
 
 #file-preview-container {
-    display: flex;
+    display: none; /* 默认隐藏 */
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 10px;
     min-height: 0;
+}
+
+#file-preview-container.has-files {
+    display: flex; /* 当有文件时显示 */
 }
 
 .preview-item {
@@ -37,6 +41,69 @@
     object-fit: contain;
     border-radius: 4px;
     min-width: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.preview-item img:hover {
+    transform: scale(1.1);
+}
+
+/* 消息中的文件预览样式 */
+.message-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.message-file-preview {
+    position: relative;
+    cursor: pointer;
+}
+
+.message-file-preview img {
+    max-height: 120px;
+    width: auto;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+
+.message-file-preview:hover img {
+    transform: scale(1.05);
+}
+
+/* 全屏预览模态框 */
+.file-preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-preview-modal.active {
+    display: flex;
+}
+
+.file-preview-modal img {
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.file-preview-modal .close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
 }
 
 .preview-item .file-name {
