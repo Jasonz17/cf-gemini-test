@@ -33,9 +33,6 @@ serve(async (req) => {
       // 构建内容数组
       const contents = [];
 
-      // 构建内容数组
-      const contents = [];
-
       // 检查输入是否为图片 URL
       const imageUrlRegex = /^(http(s?):)([/|.][\w\s-])*\.(?:jpg|jpeg|gif|png|webp|heic|heif)$/i;
       if (inputText && imageUrlRegex.test(inputText.toString())) {
