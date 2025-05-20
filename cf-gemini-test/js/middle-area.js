@@ -95,11 +95,16 @@ export function initializeMiddleArea() {
         messageElement.classList.add('message', message.type);
 
         if (Array.isArray(message.content)) { // Check if content is an array of parts
+            const textContainer = document.createElement('div');
+            textContainer.className = 'message-text-content';
+            const filesContainer = document.createElement('div');
+            filesContainer.className = 'message-files-content';
+
             message.content.forEach(part => {
                 if (part.type === 'text' && part.content) {
                     const textElement = document.createElement('div');
                     textElement.textContent = part.content;
-                    messageElement.appendChild(textElement);
+                    textContainer.appendChild(textElement);
                 } else if (part.type === 'file') {
                     const filePreviewElement = document.createElement('div');
                     filePreviewElement.classList.add('chat-file-preview');
@@ -127,19 +132,28 @@ export function initializeMiddleArea() {
                     });
                     filePreviewElement.appendChild(viewButton);
 
-                    // 将文件预览元素添加到消息元素中，但放在文本内容下方
-                    messageElement.appendChild(filePreviewElement);
+                    filesContainer.appendChild(filePreviewElement);
                 } else if (part.inlineData) {
                     const imgElement = document.createElement('img');
                     imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
                     imgElement.style.maxWidth = '100%'; // Optional: style the image
                     imgElement.style.height = 'auto'; // Optional: style the image
-                    messageElement.appendChild(imgElement);
+                    filesContainer.appendChild(imgElement);
                 }
             });
+
+            if (textContainer.hasChildNodes()) {
+                messageElement.appendChild(textContainer);
+            }
+            if (filesContainer.hasChildNodes()) {
+                messageElement.appendChild(filesContainer);
+            }
+
         } else if (typeof message.content === 'string') {
             // Handle plain text response (for backward compatibility or non-image models)
-            messageElement.textContent = message.content;
+            const textElement = document.createElement('div');
+            textElement.textContent = message.content;
+            messageElement.appendChild(textElement);
         }
 
         chatDisplay.appendChild(messageElement);
@@ -326,6 +340,7 @@ export function initializeMiddleArea() {
                 }
 
                 const aiResponse = await response.json();
+                console.log('AI Response Structure:', aiResponse); // Log the AI response structure
                 displayMessage({
                     type: 'ai',
                     content: aiResponse
