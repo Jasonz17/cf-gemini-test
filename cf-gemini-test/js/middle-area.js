@@ -245,16 +245,30 @@ export function initializeMiddleArea() {
         });
     }
 
+    // 存储当前请求的控制器
+    let currentController = null;
+
     // 处理发送消息
     async function handleSendMessage() {
         const messageText = userInput.value.trim();
+        const sendButton = document.querySelector('.send-button');
+        
+        // 如果当前有请求在进行中，则中断请求
+        if (currentController) {
+            currentController.abort();
+            currentController = null;
+            sendButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>`;
+            return;
+        }
         
         // 只有当有文本或有文件时才发送消息
         if (messageText || selectedFiles.length > 0) {
-            // 显示用户消息 (只显示文本部分)
-            // 显示用户消息 (只显示文本部分)
+            // 显示用户消息
             if (messageText) {
-                 displayMessage({
+                displayMessage({
                     type: 'user',
                     content: messageText,
                     files: selectedFiles // 添加文件到消息对象
@@ -283,12 +297,20 @@ export function initializeMiddleArea() {
             selectedFiles = []; // 清空文件数组
             filePreviewContainer.style.display = 'none'; // 无文件时隐藏预览容器
             
+            // 创建新的 AbortController
+            currentController = new AbortController();
+            
+            // 更改发送按钮为终止图标
+            sendButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>`;
+
             // 调用后端 API
             try {
                 const response = await fetch('/process', {
                     method: 'POST',
-                    // 当使用 FormData 时，浏览器会自动设置 Content-Type 为 multipart/form-data
-                    // headers: { 'Content-Type': 'application/json' }, // 不需要手动设置
+                    signal: currentController.signal,
                     body: formData
                 });
 
@@ -303,12 +325,29 @@ export function initializeMiddleArea() {
                     content: aiResponse
                 });
 
+                // 重置发送按钮图标和控制器
+                currentController = null;
+                sendButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>`;
+
             } catch (error) {
                 console.error('Error fetching AI response:', error);
-                displayMessage({
-                    type: 'ai',
-                    content: `发生错误: ${error.message}`
-                });
+                // 只有在不是用户主动取消的情况下才显示错误消息
+                if (error.name !== 'AbortError') {
+                    displayMessage({
+                        type: 'ai',
+                        content: `发生错误: ${error.message}`
+                    });
+                }
+                
+                // 重置发送按钮图标和控制器
+                currentController = null;
+                sendButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>`;
             }
         }
     }
