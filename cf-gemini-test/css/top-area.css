@@ -32,7 +32,7 @@
     border-radius: 4px;
 }
 
-#save-api-key, #docs-button {
+#save-api-key {
     padding: 8px 15px;
     border: none;
     border-radius: 20px; /* Rounded buttons */
@@ -43,9 +43,4 @@
 #save-api-key {
     background-color: #007bff; /* Placeholder button color */
     color: white;
-}
-
-#docs-button {
-    background-color: #e9e9eb; /* Placeholder button color */
-    color: #333;
 }
