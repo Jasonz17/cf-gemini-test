@@ -43,23 +43,39 @@ serve(async (req) => {
 
       for (const [key, file] of fileEntries) {
         if (file instanceof File) {
-          try {
-            // 将文件上传到 Google AI Platform
-            const uploadedFile = await ai.files.upload({
-              file: file,
-            });
-            console.log(`Uploaded file ${file.name} with URI: ${uploadedFile.uri}`);
+          const fileSizeLimit = 20 * 1024 * 1024; // 20MB
 
-            // 创建文件内容部分
-            contents.push({
-              fileData: {
-                mimeType: uploadedFile.mimeType,
-                uri: uploadedFile.uri,
-              },
-            });
-          } catch (uploadError) {
-            console.error(`Error uploading file ${file.name}:`, uploadError);
-            return new Response(`Error uploading file: ${file.name}`, { status: 500 });
+          try {
+            if (file.size <= fileSizeLimit) {
+              // 小于等于 20MB，使用 base64 编码
+              const fileBuffer = await file.arrayBuffer();
+              const base64Data = btoa(String.fromCharCode(...new Uint8Array(fileBuffer)));
+
+              contents.push({
+                fileData: {
+                  mimeType: file.type,
+                  data: base64Data,
+                },
+              });
+            } else {
+              // 大于 20MB，使用文件上传 API
+              console.log(`Uploading large file: ${file.name}`);
+              const uploadResult = await ai.uploadFile(file, {
+                mimeType: file.type,
+                displayName: file.name,
+              });
+              console.log(`Upload complete for ${file.name}, URI: ${uploadResult.file.uri}`);
+
+              contents.push({
+                fileData: {
+                  mimeType: file.type,
+                  uri: uploadResult.file.uri,
+                },
+              });
+            }
+          } catch (fileProcessError) {
+            console.error(`Error processing file ${file.name}:`, fileProcessError);
+            return new Response(`Error processing file: ${file.name}`, { status: 500 });
           }
         }
       }
