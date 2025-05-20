@@ -11,11 +11,13 @@
     margin-bottom: 15px; /* 增加底部15px间隙 */
 }
 
+
 #input-container {
     display: flex;
     flex-direction: column;
     margin-top: 10px; /* 增加与上方区域的间隔 */
 }
+
 
 #file-preview-container {
     display: flex;
@@ -25,11 +27,13 @@
     min-height: 0;
 }
 
+
 .preview-item {
     position: relative;
     margin-right: 10px;
     margin-bottom: 10px;
 }
+
 
 .preview-item img {
     max-height: 100px;
@@ -38,6 +42,7 @@
     border-radius: 4px;
     min-width: 50px;
 }
+
 
 .preview-item .file-name {
     width: 100%;
@@ -48,6 +53,7 @@
     color: #495057;
     text-align: center;
 }
+
 
 .preview-item .remove-file {
     position: absolute;
@@ -66,10 +72,12 @@
     line-height: 1;
 }
 
+
 .input-wrapper {
     position: relative;
     width: 100%;
 }
+
 
 #user-input {
     width: 100%;
@@ -88,11 +96,14 @@
     &::-webkit-scrollbar {
         width: 6px;
     }
+
     &::-webkit-scrollbar-thumb {
         background-color: #ddd;
         border-radius: 3px;
     }
+
 }
+
 
 .input-toolbar {
     position: absolute;
@@ -109,15 +120,18 @@
     pointer-events: auto;
 }
 
+
 .toolbar-left {
     display: flex;
     gap: 8px;
 }
 
+
 .toolbar-right {
     display: flex;
     align-items: center;
 }
+
 
 .send-button {
     width: 32px;
@@ -136,15 +150,18 @@
     margin-left: 10px;
 }
 
+
 .send-button svg {
     fill: #007bff;
     stroke: #007bff;
 }
 
+
 .send-button:hover {
     color: #0056b3;
     background-color: #e7f1ff;
 }
+
 
 .toolbar-icon {
     width: 32px;
@@ -163,9 +180,11 @@
     padding: 6px;
 }
 
+
 .toolbar-icon:hover {
     opacity: 1;
 }
+
 
 /* 聊天气泡内的文件预览容器样式 */
 .message-file-preview-container {
@@ -177,6 +196,7 @@
     /* border-top: 1px solid #eee; */
 }
 
+
 .message-preview-item {
     display: flex;
     flex-direction: column;
@@ -184,12 +204,14 @@
     gap: 5px;
 }
 
+
 .message-preview-item img {
     max-width: 80px;
     max-height: 80px;
     object-fit: contain;
     border-radius: 4px;
 }
+
 
 .message-file-name {
     font-size: 12px;
@@ -200,6 +222,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 
 /* 文件预览容器样式 */
 #file-preview-container {
@@ -212,6 +235,7 @@
     border-radius: 10px;
 }
 
+
 .preview-item {
     position: relative;
     display: flex;
@@ -219,6 +243,7 @@
     align-items: center;
     gap: 8px;
 }
+
 
 .preview-item-image-container {
     border-radius: 8px;
@@ -233,6 +258,7 @@
     min-height: 50px;
 }
 
+
 .preview-item img {
     max-height: 100px;
     width: auto;
@@ -241,6 +267,7 @@
     background-color: #fff;
     min-width: 50px;
 }
+
 
 .preview-item .file-name {
     width: 100%;
@@ -251,6 +278,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 
 .remove-file {
     position: absolute;
@@ -272,10 +300,12 @@
     transition: all 0.2s ease;
 }
 
+
 .remove-file:hover {
     background-color: rgba(0, 0, 0, 0.8);
     transform: scale(1.1);
 }
+
 
 #chat-display {
     flex-grow: 1;
@@ -290,10 +320,12 @@
     gap: 10px;
 }
 
+
 /* 工具栏图标提示样式 */
 .toolbar-icon {
     position: relative;
 }
+
 
 .toolbar-icon .tooltip {
     visibility: hidden;
@@ -315,6 +347,7 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
+
 .toolbar-icon .tooltip::after {
     content: "";
     position: absolute;
@@ -325,6 +358,7 @@
     border-style: solid;
     border-color: #333 transparent transparent transparent;
 }
+
 
 .toolbar-icon:hover .tooltip {
     visibility: visible;
