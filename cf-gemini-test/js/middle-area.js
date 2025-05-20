@@ -134,6 +134,7 @@ export function initializeMiddleArea() {
     // 创建文件预览容器
     const filePreviewContainer = document.createElement('div');
     filePreviewContainer.id = 'file-preview-container';
+    filePreviewContainer.style.display = 'none'; // 默认隐藏
     inputContainer.insertBefore(filePreviewContainer, inputContainer.firstChild);
 
     // 文件类型映射
@@ -194,11 +195,21 @@ export function initializeMiddleArea() {
                     // 从 selectedFiles 数组中移除文件
                     selectedFiles = selectedFiles.filter(f => f.name !== file.name);
                     previewItem.remove();
+
+                    // 如果没有剩余文件，隐藏预览容器
+                    if (selectedFiles.length === 0) {
+                        filePreviewContainer.style.display = 'none';
+                    }
                 });
                 previewItem.appendChild(removeButton);
                 
                 // 添加到预览容器
                 filePreviewContainer.appendChild(previewItem);
+
+                // 如果是第一个文件，显示预览容器
+                if (selectedFiles.length === 1) {
+                    filePreviewContainer.style.display = 'flex';
+                }
             });
         });
     }
