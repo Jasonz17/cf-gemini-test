@@ -3,7 +3,7 @@
     background-color: #f0f0f0; /* 改为灰色，与网页整体背景色互换 */
     padding: 10px;
     box-shadow: none; /* No shadow */
-    border: 1px solid #007bff; /* 添加蓝色边框 */
+
     margin-left: 15px; /* 增加与左边的缝隙 */
     margin-bottom: 15px; /* 增加底部15px间隙 */
     display: flex;    flex-direction: column;
@@ -23,7 +23,7 @@
 
 #new-chat-top-button {
     padding: 5px 10px;
-    border: none;
+    border: 1px solid #007bff; /* 添加蓝色边框 */
     border-radius: 15px;
     cursor: pointer;
     background-color: #e9e9eb;
@@ -47,7 +47,7 @@
     padding: 8px;
     border-radius: 8px; /* 增加圆角 */
     border: 1px solid #ccc;
-    margin-bottom: 8px; /* 减少与模型信息的间距 */
+    margin-bottom: 5px; /* 进一步减少与模型信息的间距 */
     width: 100%;
     box-sizing: border-box;
     height: 40px; /* 增加选择框高度 */
