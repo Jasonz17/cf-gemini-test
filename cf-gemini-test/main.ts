@@ -145,10 +145,10 @@ serve(async (req) => {
           }
         }
 
-        if (responseContent) {
-           // Return response content (including placeholder for image)
-           return new Response(responseContent.trim(), {
-             headers: { "Content-Type": "text/plain" },
+        if (parts.length > 0) {
+           // Return the parts array as JSON
+           return new Response(JSON.stringify(parts), {
+             headers: { "Content-Type": "application/json" },
            });
         } else {
            return new Response("Received empty response from AI", { status: 500 });
