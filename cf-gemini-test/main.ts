@@ -122,8 +122,9 @@ serve(async (req) => {
       });
 
       // 获取并返回文本响应
-      if (result && result.response) {
-        const responseText = result.response.text();
+      // 获取并返回文本响应
+      if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0 && result.candidates[0].content.parts[0].text) {
+        const responseText = result.candidates[0].content.parts[0].text;
         return new Response(responseText, {
           headers: { "Content-Type": "text/plain" },
         });
