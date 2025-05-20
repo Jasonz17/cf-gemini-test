@@ -99,12 +99,12 @@ serve(async (req) => {
                     displayName: file.name,
                   },
                 });
-                console.log(`Upload complete for ${file.name}, URI: ${uploadResult.file.uri}`);
+                console.log(`Upload complete for ${file.name}, URI: ${uploadResult.uri}`);
 
                 contents.push({
                   fileData: {
                     mimeType: file.type,
-                    uri: uploadResult.file.uri,
+                    uri: uploadResult.uri,
                   },
                 });
               } catch (uploadError) {
