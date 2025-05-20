@@ -42,13 +42,3 @@
     display: none; /* Hidden by default */
     margin-top: 5px;
 }
-
-.upload-options button {
-    margin-right: 5px;
-}
-
-.file-upload-info {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 5px;
-}
