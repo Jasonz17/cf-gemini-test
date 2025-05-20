@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #f0f0f0; /* Consistent background color */
+    background-color: #ffffff; /* 白色背景 */
 }
 
 .top-left {
@@ -14,15 +14,13 @@
 .site-name {
     font-size: 1.5em;
     font-weight: bold;
-    border: 1px solid #ccc; /* 添加外边框 */
-    padding: 5px 10px; /* 调整内边距使边框更协调 */
+    padding: 5px 10px; /* 调整内边距 */
 }
 
 .api-key-area {
     display: flex;
     align-items: center;
-    border: 1px solid #ccc; /* 添加外边框 */
-    padding: 5px 10px; /* 调整内边距使边框更协调 */
+    padding: 5px 10px; /* 调整内边距 */
 }
 
 #api-key-input {
