@@ -82,7 +82,7 @@ serve(async (req) => {
             } else {
               // 大于 20MB，使用文件上传 API
               console.log(`Uploading large file: ${file.name}`);
-              const uploadResult = await ai.uploadFile(file, {
+              const uploadResult = await ai.files.upload(file, {
                 mimeType: file.type,
                 displayName: file.name,
               });
