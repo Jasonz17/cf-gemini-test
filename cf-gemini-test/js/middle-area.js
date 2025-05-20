@@ -224,7 +224,9 @@ export function initializeMiddleArea() {
             // 构建 FormData
             const formData = new FormData();
             formData.append('model', selectedModel); // 使用选中的模型
-            formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw'); // 使用指定的 API 密钥
+            const apiKeyInput = document.getElementById('api-key-input');
+            const apiKey = apiKeyInput ? apiKeyInput.value : ''; // 从输入框获取 API 密钥，如果输入框不存在则为空字符串
+            formData.append('apikey', apiKey); // 使用获取的 API 密钥
             formData.append('input', messageText); // 用户输入作为内容
 
             // 添加文件到 FormData
