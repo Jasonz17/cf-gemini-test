@@ -176,10 +176,11 @@ async function handleSendMessage(userInput, sendButton, filePreviewContainer, di
 
         const modelSelect = document.getElementById('model-select');
         const selectedModel = modelSelect.value;
+        const apiKey = modelSelect.getAttribute('data-apikey');
 
         const formData = new FormData();
         formData.append('model', selectedModel);
-        formData.append('apikey', 'AIzaSyCfZk7O-XTcm20GHvht85goeS2Irwtb4jw');
+        formData.append('apikey', apiKey);
         formData.append('input', messageText);
         formData.append('stream', isStreamMode.toString());
 
