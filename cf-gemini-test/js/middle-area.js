@@ -96,10 +96,38 @@ export function initializeMiddleArea() {
 
         if (Array.isArray(message.content)) { // Check if content is an array of parts
             message.content.forEach(part => {
-                if (part.text) {
+                if (part.type === 'text' && part.content) {
                     const textElement = document.createElement('div');
-                    textElement.textContent = part.text;
+                    textElement.textContent = part.content;
                     messageElement.appendChild(textElement);
+                } else if (part.type === 'file') {
+                    const filePreviewElement = document.createElement('div');
+                    filePreviewElement.classList.add('chat-file-preview');
+                    filePreviewElement.dataset.fileName = part.name;
+
+                    if (part.mimeType.startsWith('image/') && part.previewUrl) {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = part.previewUrl;
+                        filePreviewElement.appendChild(imgElement);
+                    } else {
+                        const fileNameDiv = document.createElement('div');
+                        fileNameDiv.className = 'file-name';
+                        fileNameDiv.textContent = part.name;
+                        filePreviewElement.appendChild(fileNameDiv);
+                    }
+
+                    // 添加放大镜图标容器
+                    const viewButton = document.createElement('div');
+                    viewButton.className = 'view-file';
+                    viewButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'; // 放大镜SVG
+                    viewButton.addEventListener('click', () => {
+                        // TODO: Implement file detail viewing logic
+                        console.log('View file clicked:', part.name);
+                        alert(`查看文件详情功能待实现：${part.name}`);
+                    });
+                    filePreviewElement.appendChild(viewButton);
+
+                    messageElement.appendChild(filePreviewElement);
                 } else if (part.inlineData) {
                     const imgElement = document.createElement('img');
                     imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
@@ -108,7 +136,7 @@ export function initializeMiddleArea() {
                     messageElement.appendChild(imgElement);
                 }
             });
-        } else {
+        } else if (typeof message.content === 'string') {
             // Handle plain text response (for backward compatibility or non-image models)
             messageElement.textContent = message.content;
         }
@@ -227,11 +255,29 @@ export function initializeMiddleArea() {
 
         // 只有当有文本或有文件时才发送消息
         if (messageText || selectedFiles.length > 0) {
-            // 显示用户消息 (只显示文本部分)
+            // 构建用户消息内容，包含文本和文件信息
+            const userMessageContent = [];
             if (messageText) {
+                userMessageContent.push({ type: 'text', content: messageText });
+            }
+
+            // 添加文件信息到用户消息内容
+            selectedFiles.forEach(file => {
+                userMessageContent.push({
+                    type: 'file',
+                    name: file.name,
+                    size: file.size,
+                    mimeType: file.type,
+                    // 对于图片，可以包含一个预览URL
+                    previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : null
+                });
+            });
+
+            // 显示用户消息
+            if (userMessageContent.length > 0) {
                  displayMessage({
                     type: 'user',
-                    content: messageText
+                    content: userMessageContent
                 });
             }
 
