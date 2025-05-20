@@ -160,6 +160,35 @@
     background-color: #e7f1ff;
 }
 
+.stream-toggle {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    opacity: 1;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background-color: transparent;
+    border: none;
+    padding: 6px;
+    margin-right: 4px;
+}
+
+.stream-toggle svg {
+    fill: none;
+    stroke: #6c757d;
+}
+
+.stream-toggle.active svg {
+    stroke: #007bff;
+}
+
+.stream-toggle:hover {
+    background-color: #e7f1ff;
+}
 
 .toolbar-icon {
     width: 32px;
