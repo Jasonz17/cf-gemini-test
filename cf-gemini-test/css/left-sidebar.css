@@ -18,7 +18,7 @@
     justify-content: flex-end; /* Align items to the right */
     align-items: center;
     width: 100%;
-    margin-bottom: 20px; /* Add some space below the header */
+    margin-bottom: 10px; /* 减小与模型选择框的间距 */
 }
 
 #new-chat-top-button {
@@ -52,7 +52,7 @@
 
 /* Font size reduction for model info labels */
 .left-settings .setting-group label {
-    font-size: 10px !important;
+    font-size: 9px !important;
 }
 
 
@@ -77,7 +77,7 @@
     margin: 5px 0;
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 #model-info .value {
