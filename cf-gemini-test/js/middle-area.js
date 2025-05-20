@@ -306,6 +306,15 @@ export function initializeMiddleArea() {
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>`;
 
+            // 创建AI消息元素
+            const aiMessageElement = document.createElement('div');
+            aiMessageElement.classList.add('message', 'ai');
+            chatDisplay.appendChild(aiMessageElement);
+
+            // 获取流式响应状态
+            const streamToggle = document.querySelector('.stream-toggle');
+            const isStreamMode = streamToggle && streamToggle.classList.contains('active');
+
             // 调用后端 API
             try {
                 const response = await fetch('/process', {
@@ -319,11 +328,29 @@ export function initializeMiddleArea() {
                     throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
 
-                const aiResponse = await response.json();
-                displayMessage({
-                    type: 'ai',
-                    content: aiResponse
-                });
+                if (isStreamMode) {
+                    // 流式处理响应
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let accumulatedContent = '';
+
+                    while (true) {
+                        const {value, done} = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, {stream: true});
+                        accumulatedContent += chunk;
+                        
+                        // 更新消息内容
+                        aiMessageElement.textContent = accumulatedContent;
+                        // 滚动到最新消息
+                        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+                    }
+                } else {
+                    // 非流式处理
+                    const aiResponse = await response.json();
+                    aiMessageElement.textContent = aiResponse;
+                }
 
                 // 重置发送按钮图标和控制器
                 currentController = null;
