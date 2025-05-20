@@ -125,7 +125,7 @@ serve(async (req) => {
         }
       }
 
-      if (contents.length === 0) {
+      if (contentParts.length === 0) {
          return new Response("No text or files provided", { status: 400 });
       }
 
@@ -137,7 +137,7 @@ serve(async (req) => {
 
       const result = await ai.models.generateContent({
         model: model.toString(),
-        contents: contents,
+        contents: contentParts,
         config: config,
       });
 
