@@ -238,6 +238,10 @@ export function initializeMiddleArea() {
             filePreviewContainer.innerHTML = ''; // 清空预览容器
             selectedFiles = []; // 清空文件数组
             
+            // 禁用发送按钮并显示加载状态
+            sendButton.disabled = true;
+            sendButton.classList.add('loading'); // 添加一个loading class用于样式控制
+
             // 调用后端 API
             try {
                 const response = await fetch('/process', {
@@ -264,6 +268,10 @@ export function initializeMiddleArea() {
                     type: 'ai',
                     content: `发生错误: ${error.message}`
                 });
+            } finally {
+                // 重新启用发送按钮并移除加载状态
+                sendButton.disabled = false;
+                sendButton.classList.remove('loading');
             }
         }
     }
