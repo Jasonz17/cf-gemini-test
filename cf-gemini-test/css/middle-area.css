@@ -261,6 +261,64 @@
     gap: 10px;
 }
 
+/* 聊天气泡内的文件预览样式 */
+.message.user .chat-file-preview {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e9e9eb; /* Light grey background for user message file preview */
+    cursor: pointer;
+    overflow: hidden;
+    max-width: 200px; /* Limit width */
+}
+
+.message.user .chat-file-preview img {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.message.user .chat-file-preview .file-name {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: #333;
+}
+
+.message.user .chat-file-preview .view-file {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.message.user .chat-file-preview:hover .view-file {
+    opacity: 1;
+}
+
+.message.user .chat-file-preview .view-file svg {
+    fill: none;
+    stroke: white;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 /* 工具栏图标提示样式 */
 .toolbar-icon {
     position: relative;
