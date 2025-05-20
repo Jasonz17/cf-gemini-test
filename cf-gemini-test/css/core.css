@@ -1,1 +1,74 @@
+/* Placeholder styles for chat bubbles and file previews */
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+}
 
+.message.user {
+    background-color: #007bff; /* Placeholder user bubble color */
+    color: white;
+    align-self: flex-end;
+}
+
+.message.ai {
+    background-color: #e9e9eb; /* Placeholder AI bubble color */
+    color: #333;
+    align-self: flex-start;
+}
+
+.file-preview {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.file-preview img {
+    max-height: 100px; /* Placeholder fixed height for images */
+    width: auto;
+}
+
+.file-preview span {
+    display: block;
+    margin-top: 5px;
+}
+
+/* Placeholder for Docs page */
+#docs-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+    z-index: 100;
+    display: none; /* Hidden by default */
+    padding: 20px;
+    overflow-y: auto;
+}
+
+#docs-page .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* Placeholder for upload options */
+.upload-options {
+    display: none; /* Hidden by default */
+    margin-top: 5px;
+}
+
+.upload-options button {
+    margin-right: 5px;
+}
+
+.file-upload-info {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
