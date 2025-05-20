@@ -32,12 +32,12 @@ serve(async (req) => {
       const ai = new GoogleGenAI({ apiKey: apikey.toString() });
 
       // 构建内容数组
-      const contents = [];
+      const contentParts = [];
 
       // 检查输入是否为图片 URL
       const imageUrlRegex = /^(http(s?):)([/|.][\w\s-])*\.(?:jpg|jpeg|gif|png|webp|heic|heif)$/i;
       if (inputText && imageUrlRegex.test(inputText.toString())) {
-        // 如果是图片 URL，添加到 contents 数组
+        // 如果是图片 URL，添加到 contentParts 数组
         const imageUrl = inputText.toString();
         // 尝试从 URL 推断 MIME 类型，或者使用默认值
         const mimeType = imageUrl.split('.').pop()?.toLowerCase() === 'jpg' ? 'image/jpeg' :
@@ -49,7 +49,7 @@ serve(async (req) => {
                          imageUrl.split('.').pop()?.toLowerCase() === 'heif' ? 'image/heif' :
                          'image/*'; // 默认或未知类型
 
-        contents.push({
+        contentParts.push({
           fileData: {
             mimeType: mimeType,
             uri: imageUrl,
@@ -57,7 +57,7 @@ serve(async (req) => {
         });
       } else if (inputText) {
         // 如果不是图片 URL，作为文本添加
-        contents.push({ text: inputText.toString() });
+        contentParts.push({ text: inputText.toString() });
       }
 
       // 添加文件部分 (处理上传的文件)
@@ -79,7 +79,7 @@ serve(async (req) => {
               const fileBuffer = await file.arrayBuffer();
               const base64Data = encodeBase64(new Uint8Array(fileBuffer));
 
-              contents.push({
+              contentParts.push({
                 inlineData: {
                   mimeType: file.type,
                   data: base64Data,
@@ -101,12 +101,8 @@ serve(async (req) => {
                 });
                 console.log(`Upload complete for ${file.name}, URI: ${uploadResult.uri}`);
 
-                contents.push({
-                  fileData: {
-                    mimeType: file.type,
-                    uri: uploadResult.uri,
-                  },
-                });
+                // 使用 createPartFromUri 构建文件内容部分
+                contentParts.push(createPartFromUri(uploadResult.uri, uploadResult.mimeType));
               } catch (uploadError) {
                 console.error(`Error uploading large file ${file.name}:`, uploadError);
                 return new Response(`Error uploading file: ${file.name}`, { status: 500 });
