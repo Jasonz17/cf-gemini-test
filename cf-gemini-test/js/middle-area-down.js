@@ -71,9 +71,11 @@ export function initializeInputArea(displayMessage) {
 
     // 添加键盘事件监听
     userInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage(userInput, sendButton, filePreviewContainer, displayMessage, isStreamMode);
+        if (e.key === 'Enter') {
+            if (!e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(userInput, sendButton, filePreviewContainer, displayMessage, isStreamMode);
+            }
         }
     });
 }
