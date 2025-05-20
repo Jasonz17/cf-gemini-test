@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (part.inlineData) {
                             // 处理图片数据
                             const imgSrc = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                            messageContent += `<img src=\"${imgSrc}\" alt=\"Generated Image\" style=\"max-width: 100%;\">";
+                            messageContent += `<img src="${imgSrc}" alt="Generated Image" style="max-width: 100%">`;
                         }
                     }
                     aiMessageDiv.innerHTML = messageContent;
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (part.inlineData) {
                         // 处理图片数据
                         const imgSrc = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                        messageContent += `<img src=\"${imgSrc}\" alt=\"Generated Image\" style=\"max-width: 100%;\">";
+                        messageContent += `<img src="${imgSrc}" alt="Generated Image" style="max-width: 100%">`;
                     }
                 }
                 
