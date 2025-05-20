@@ -272,6 +272,7 @@ export function initializeMiddleArea() {
             adjustInputHeight();
             filePreviewContainer.innerHTML = ''; // 清空预览容器
             selectedFiles = []; // 清空文件数组
+            filePreviewContainer.style.display = 'none'; // 无文件时隐藏预览容器
             
             // 调用后端 API
             try {
