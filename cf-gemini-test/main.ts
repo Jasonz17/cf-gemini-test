@@ -125,12 +125,15 @@ serve(async (req) => {
       });
 
       // 获取并返回文本响应
-      console.log('Gemini API result:', result);
-      const responseText = result.response.text();
-
-      return new Response(responseText, {
-        headers: { "Content-Type": "text/plain" },
-      });
+      if (result && result.response) {
+        const responseText = result.response.text();
+        return new Response(responseText, {
+          headers: { "Content-Type": "text/plain" },
+        });
+      } else {
+        console.error("Unexpected API response structure:", JSON.stringify(result, null, 2));
+        return new Response("Error: Unexpected API response structure", { status: 500 });
+      }
 
     } catch (error) {
       console.error("Error processing request:", error);
