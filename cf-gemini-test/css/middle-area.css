@@ -67,6 +67,7 @@
     width: auto;
     border-radius: 4px;
     transition: transform 0.3s ease;
+    display: block;
 }
 
 .message-file-preview:hover img {
@@ -243,7 +244,6 @@
     gap: 15px;
     margin-bottom: 15px;
     padding: 10px;
-    background-color: #fafafa;
     border-radius: 10px;
 }
 
