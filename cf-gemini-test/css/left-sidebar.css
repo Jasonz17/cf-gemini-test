@@ -1,0 +1,205 @@
+#left-sidebar {
+    width: 300px;
+    background-color: #ffffff; /* Placeholder background color */
+    padding: 20px;
+    box-shadow: none; /* No shadow */
+    border: none; /* 取消蓝色边框 */
+    margin-left: 15px; /* 增加与左边的缝隙 */
+    margin-bottom: 15px; /* 增加底部15px间隙 */
+    display: flex;    flex-direction: column;
+    border-radius: 15px; /* 增大圆角 */
+    position: relative; /* Needed for absolute positioning of the button */
+    box-sizing: border-box;
+}
+
+
+.sidebar-header-buttons {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px; /* Add some space below the header */
+}
+
+#new-chat-top-button, #toggle-sidebar-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: #e9e9eb;
+    color: #333;
+    font-size: 0.9em;
+    height: 30px;
+    line-height: 20px; /* Adjusted line-height to better center text */
+}
+
+#toggle-sidebar-button span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+#left-sidebar.collapsed #toggle-sidebar-button span {
+    transform: rotate(180deg);
+}
+
+#left-sidebar {
+    transition: width 0.3s ease; /* Add transition for smooth collapsing */
+}
+
+#left-sidebar.collapsed {
+    width: 50px; /* Set a smaller width when collapsed */
+    overflow: hidden; /* Hide content that overflows when collapsed */
+}
+
+#left-sidebar.collapsed .sidebar-content {
+    display: none;
+}
+.left-settings {
+    /* Add styles for the left sidebar here */
+
+/* Model selection box beautification */
+#model-select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px; /* 增加与上方模型的间距 */
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px; /* 增加选择框高度 */
+    font-size: 16px; /* 增大内部字体（原14px+1号） */
+}
+
+/* Font size reduction for model info labels */
+.left-settings .setting-group label {
+    font-size: 10px !important;
+}
+
+/* Temperature slider and input styling */
+.temperature-setting {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.temperature-setting label {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.temperature-setting input[type="range"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.temperature-setting input[type="number"] {
+    width: 50px; /* Adjust width as needed */
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    text-align: right;
+    /* Hide spin buttons */
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.temperature-setting input[type="number"]::-webkit-outer-spin-button,
+.temperature-setting input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+}
+
+}
+
+.setting-group {
+    margin-bottom: 15px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px; /* Increased margin */
+    font-weight: bold;
+}
+
+#model-select {
+    width: 100%; /* Adjust width to fit container */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+
+#model-info p {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+#model-info .value {
+    text-align: right;
+}
+
+/* Styles for the toggle switch */
+.streaming-setting {
+    display: flex;
+    justify-content: space-between; /* Space out label and toggle */
+    align-items: center;
+}
+
+.streaming-setting label {
+    margin-right: 10px;
+    display: inline-block; /* Allow label and toggle on same line */
+    font-weight: bold;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Increased height */
+    width: 18px; /* Increased width */
+    left: 1px; /* Adjusted position */
+    top: 1px; /* Adjusted position for vertical centering */
+    bottom: 1px; /* Adjusted position for vertical centering */
+    margin: auto 0; /* Auto margins for vertical centering */
+    background-color: black; /* Set circle color to black */
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + label {
+    background-color: #007bff;
+}
+
+.toggle-switch input:focus + label {
+    box-shadow: 0 0 1px #007bff;
+}
+
+.toggle-switch input:checked + label:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
