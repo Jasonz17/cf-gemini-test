@@ -134,6 +134,7 @@ export function initializeMiddleArea() {
                     previewItem.appendChild(fileNameDiv);
                 }
                 filePreviewContainer.appendChild(previewItem);
+                filePreviewContainer.style.display = 'flex';
             });
             // 将文件预览容器添加到消息元素内部
             messageElement.appendChild(filePreviewContainer);
@@ -226,6 +227,7 @@ export function initializeMiddleArea() {
                 
                 // 添加到预览容器
                 filePreviewContainer.appendChild(previewItem);
+                filePreviewContainer.style.display = 'flex';
             });
         });
     }
