@@ -47,7 +47,7 @@
     width: 100%;
     box-sizing: border-box;
     height: 40px; /* 增加选择框高度 */
-    font-size: 16px; /* 增大内部字体（原14px+1号） */
+    font-size: 14px; /* 减小内部字体（原16px-1号） */
 }
 
 /* Font size reduction for model info labels */
@@ -66,6 +66,7 @@
     display: block;
     margin-bottom: 8px; /* Increased margin */
     font-weight: bold;
+    font-size: 14px; /* 减小字体（原16px-1号） */
 }
 
 #model-select {
@@ -77,7 +78,7 @@
     margin: 5px 0;
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 10px; /* 减小字体（原12px-1号） */
 }
 
 #model-info .value {
