@@ -113,6 +113,31 @@ export function initializeMiddleArea() {
         }
 
         chatDisplay.appendChild(messageElement);
+
+        // 如果消息包含文件，显示文件预览
+        if (message.files && message.files.length > 0) {
+            const filePreviewContainer = document.createElement('div');
+            filePreviewContainer.classList.add('message-file-preview-container');
+
+            message.files.forEach(file => {
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('message-preview-item');
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    previewItem.appendChild(img);
+                } else {
+                    const fileNameDiv = document.createElement('div');
+                    fileNameDiv.classList.add('message-file-name');
+                    fileNameDiv.textContent = file.name;
+                    previewItem.appendChild(fileNameDiv);
+                }
+                filePreviewContainer.appendChild(previewItem);
+            });
+            messageElement.appendChild(filePreviewContainer);
+        }
+
         // 滚动到最新消息
         chatDisplay.scrollTop = chatDisplay.scrollHeight;
     }
@@ -210,10 +235,12 @@ export function initializeMiddleArea() {
         // 只有当有文本或有文件时才发送消息
         if (messageText || selectedFiles.length > 0) {
             // 显示用户消息 (只显示文本部分)
+            // 显示用户消息 (只显示文本部分)
             if (messageText) {
                  displayMessage({
                     type: 'user',
-                    content: messageText
+                    content: messageText,
+                    files: selectedFiles // 添加文件到消息对象
                 });
             }
            
