@@ -1,6 +1,6 @@
 #left-sidebar {
     width: 250px;
-    background-color: #ffffff; /* Placeholder background color */
+    background-color: #f0f0f0; /* 改为灰色，与网页整体背景色互换 */
     padding: 20px;
     box-shadow: none; /* No shadow */
     border: none; /* 取消蓝色边框 */
