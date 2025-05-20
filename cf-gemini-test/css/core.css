@@ -12,10 +12,3 @@
     align-self: flex-end;
 }
 
-.message.ai {
-    background-color: #e9e9eb; /* Placeholder AI bubble color */
-    color: #333;
-    align-self: flex-start;
-}
-
-
