@@ -125,6 +125,7 @@ serve(async (req) => {
       });
 
       // 获取并返回文本响应
+      console.log('Gemini API result:', result);
       const responseText = result.response.text();
 
       return new Response(responseText, {
