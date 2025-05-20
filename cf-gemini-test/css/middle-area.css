@@ -1,0 +1,12 @@
+#middle-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 5px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
