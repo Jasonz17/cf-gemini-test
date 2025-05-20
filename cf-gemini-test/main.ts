@@ -73,7 +73,7 @@ serve(async (req) => {
               const base64Data = btoa(String.fromCharCode(...new Uint8Array(fileBuffer)));
 
               contents.push({
-                fileData: {
+                inlineData: {
                   mimeType: file.type,
                   data: base64Data,
                 },
