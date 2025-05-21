@@ -41,34 +41,35 @@ export function displayMessage(message, chatDisplay) {
 
         chatDisplay.appendChild(messageElement);
 
-    // 如果消息包含文件，显示文件预览
-    if (message.files && message.files.length > 0) {
-        const filePreviewContainer = document.createElement('div');
-        filePreviewContainer.classList.add('message-file-preview-container');
+        // 如果消息包含文件，显示文件预览
+        if (message.files && message.files.length > 0) {
+            const filePreviewContainer = document.createElement('div');
+            filePreviewContainer.classList.add('message-file-preview-container');
 
-        message.files.forEach(file => {
-            const previewItem = document.createElement('div');
-            previewItem.classList.add('message-preview-item');
+            message.files.forEach(file => {
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('message-preview-item');
 
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                previewItem.appendChild(img);
-            } else {
-                const fileNameDiv = document.createElement('div');
-                fileNameDiv.classList.add('message-file-name');
-                fileNameDiv.textContent = file.name;
-                previewItem.appendChild(fileNameDiv);
-            }
-            filePreviewContainer.appendChild(previewItem);
-            filePreviewContainer.style.display = 'flex';
-        });
-        // 将文件预览容器添加到聊天显示区域，位于消息元素下方
-        chatDisplay.appendChild(filePreviewContainer);
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    previewItem.appendChild(img);
+                } else {
+                    const fileNameDiv = document.createElement('div');
+                    fileNameDiv.classList.add('message-file-name');
+                    fileNameDiv.textContent = file.name;
+                    previewItem.appendChild(fileNameDiv);
+                }
+                filePreviewContainer.appendChild(previewItem);
+                filePreviewContainer.style.display = 'flex';
+            });
+            // 将文件预览容器添加到聊天显示区域，位于消息元素下方
+            chatDisplay.appendChild(filePreviewContainer);
+        }
+
+        // 滚动到最新消息
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
     }
-
-    // 滚动到最新消息
-    chatDisplay.scrollTop = chatDisplay.scrollHeight;
 }
 
 // 初始化聊天显示区域
