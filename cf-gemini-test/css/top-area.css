@@ -9,6 +9,23 @@
 .top-left {
     display: flex;
     align-items: center;
+    gap: 10px;
+}
+
+.list-icon {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.list-icon:hover {
+    color: #9880ff;
 }
 
 .site-name {
