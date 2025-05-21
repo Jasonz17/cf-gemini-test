@@ -232,7 +232,7 @@ async function handleSendMessage(userInput, sendButton, filePreviewContainer, di
             if (isStreamMode) {
                 await handleStreamResponse(response, aiMessageElement, chatDisplay);
             } else {
-                await handleNormalResponse(response, aiMessageElement);
+                await handleNormalResponse(response, aiMessageElement, chatDisplay);
             }
 
         } catch (error) {
@@ -291,7 +291,7 @@ async function handleStreamResponse(response, aiMessageElement, chatDisplay) {
 }
 
 // 处理普通响应
-async function handleNormalResponse(response, aiMessageElement) {
+async function handleNormalResponse(response, aiMessageElement, chatDisplay) {
     const parts = await response.json();
     aiMessageElement.innerHTML = '';
     parts.forEach(part => {
