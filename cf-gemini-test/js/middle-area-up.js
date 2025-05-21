@@ -34,14 +34,12 @@ export function displayMessage(message, chatDisplay) {
                     messageElement.appendChild(imgElement);
                 }
             });
-    } else {
-        // 处理纯文本响应，同样使用marked解析
-        messageElement.innerHTML = marked.parse(message.content);
-    }
+        } else {
+            // 处理纯文本响应，同样使用marked解析
+            messageElement.innerHTML = marked.parse(message.content);
+        }
 
-    chatDisplay.appendChild(messageElement);
-
-    chatDisplay.appendChild(messageElement);
+        chatDisplay.appendChild(messageElement);
 
     // 如果消息包含文件，显示文件预览
     if (message.files && message.files.length > 0) {
