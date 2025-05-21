@@ -9,7 +9,7 @@ export function initializeMiddleArea() {
     
     // 初始化输入区域，传入displayMessage函数用于显示消息
     initializeInputArea((message) => {
-        const chatDisplay = document.getElementById('chat-display');
+        // 使用已经获取的chatDisplay变量，而不是重新获取元素
         displayMessage(message, chatDisplay);
     });
 }
