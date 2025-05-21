@@ -1,6 +1,6 @@
 // js/middle-area.js
 
-import { initializeChatDisplay } from './middle-area-up.js';
+import { initializeChatDisplay, displayMessage } from './middle-area-up.js';
 import { initializeInputArea } from './middle-area-down.js';
 
 export function initializeMiddleArea() {
