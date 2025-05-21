@@ -11,6 +11,75 @@
     margin-bottom: 15px; /* 增加底部15px间隙 */
 }
 
+
+#input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px; /* 增加与上方区域的间隔 */
+}
+
+
+#file-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 5px;
+    min-height: 0;
+    border: 1px solid #ddd; /* 添加灰色线框 */
+}
+
+
+.preview-item {
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+
+.preview-item img {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    min-width: 50px;
+}
+
+
+.preview-item .file-name {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: #495057;
+    text-align: center;
+}
+
+
+.preview-item .remove-file {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+}
+
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+
 #user-input {
     width: 100%;
     padding: 12px 10px 50px 10px; /* 增加底部内边距以容纳工具栏 */
@@ -23,15 +92,8 @@
     overflow-y: hidden;
     resize: none;
     height: auto;
+    box-sizing: border-box;
 }
-.input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-
-
-
 #user-input::-webkit-scrollbar {
     width: 6px;
 }
