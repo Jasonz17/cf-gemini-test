@@ -11,7 +11,19 @@
     margin-bottom: 15px; /* 增加底部15px间隙 */
 }
 
-
+#user-input {
+    width: 100%;
+    padding: 12px 10px 50px 10px; /* 增加底部内边距以容纳工具栏 */
+    border: 1px solid #ccc;
+    border-radius: 12px; /* 增大输入框圆角 */
+    font-size: 14px;
+    line-height: 24px;
+    min-height: 72px;
+    max-height: 176px;
+    overflow-y: hidden;
+    resize: none;
+    height: auto;
+}
 .input-wrapper {
     position: relative;
     width: 100%;
