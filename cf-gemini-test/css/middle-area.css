@@ -13,13 +13,6 @@
 
 
 
-
-.input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-
 #user-input {
     width: 100%;
     padding: 12px 10px 50px 10px; /* 增加底部内边距以容纳工具栏 */
