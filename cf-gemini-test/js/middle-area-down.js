@@ -118,7 +118,12 @@ function handleToolClick(type, filePreviewContainer) {
         files.forEach(file => {
             selectedFiles.push(file);
             const fileName = file.name;
-            const displayName = fileName.length > 16 ? fileName.substring(0, 16) + '...' : fileName;
+            const fileExt = fileName.substring(fileName.lastIndexOf('.'));
+            const fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+            const maxLength = 16;
+            const displayName = fileNameWithoutExt.length > maxLength - fileExt.length
+                ? fileNameWithoutExt.substring(0, maxLength - fileExt.length) + '...' + fileExt
+                : fileName;
             
             const previewItem = document.createElement('div');
             previewItem.className = 'preview-item';
@@ -199,7 +204,14 @@ async function handleSendMessage(userInput, sendButton, filePreviewContainer, di
 
         const aiMessageElement = document.createElement('div');
         aiMessageElement.classList.add('message', 'ai');
+        
+        // 添加加载动画
+        const loadingElement = document.createElement('div');
+        loadingElement.classList.add('loading-animation');
+        loadingElement.innerHTML = '<div class="dot-pulse"></div>';
+        aiMessageElement.appendChild(loadingElement);
         chatDisplay.appendChild(aiMessageElement);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
         try {
             const response = await fetch('/process', {
@@ -222,6 +234,7 @@ async function handleSendMessage(userInput, sendButton, filePreviewContainer, di
         } catch (error) {
             console.error('Error fetching AI response:', error);
             if (error.name !== 'AbortError') {
+                aiMessageElement.innerHTML = '';
                 displayMessage({
                     type: 'ai',
                     content: `发生错误: ${error.message}`
@@ -276,9 +289,11 @@ async function handleStreamResponse(response, aiMessageElement, chatDisplay) {
 // 处理普通响应
 async function handleNormalResponse(response, aiMessageElement) {
     const parts = await response.json();
+    aiMessageElement.innerHTML = '';
     parts.forEach(part => {
         if (part.text) {
-            aiMessageElement.textContent = part.text;
+            aiMessageElement.innerHTML = marked.parse(part.text);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
         } else if (part.inlineData) {
             const imgElement = document.createElement('img');
             imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
