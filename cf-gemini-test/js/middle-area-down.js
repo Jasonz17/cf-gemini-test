@@ -162,6 +162,10 @@ function handleToolClick(type, filePreviewContainer) {
 async function handleSendMessage(userInput, sendButton, filePreviewContainer, displayMessage, isStreamMode) {
     const messageText = userInput.value.trim();
     const chatDisplay = document.getElementById('chat-display');
+    if (!chatDisplay) {
+        console.error('聊天显示区域未找到');
+        return;
+    }
     
     if (currentController) {
         currentController.abort();
