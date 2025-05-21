@@ -5,24 +5,41 @@ export function displayMessage(message, chatDisplay) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message', message.type);
 
-    if (Array.isArray(message.content)) { // Check if content is an array of parts
-        message.content.forEach(part => {
-            if (part.text) {
-                const textElement = document.createElement('div');
-                textElement.textContent = part.text;
-                messageElement.appendChild(textElement);
-            } else if (part.inlineData) {
-                const imgElement = document.createElement('img');
-                imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                imgElement.style.maxWidth = '100%'; // Optional: style the image
-                imgElement.style.height = 'auto'; // Optional: style the image
-                messageElement.appendChild(imgElement);
-            }
-        });
+    // 添加marked库的CDN引用
+    if (!window.marked) {
+        const markedScript = document.createElement('script');
+        markedScript.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+        document.head.appendChild(markedScript);
+
+        markedScript.onload = () => {
+            renderMessage();
+        };
     } else {
-        // Handle plain text response (for backward compatibility or non-image models)
-        messageElement.textContent = message.content;
+        renderMessage();
     }
+
+    function renderMessage() {
+        if (Array.isArray(message.content)) {
+            message.content.forEach(part => {
+                if (part.text) {
+                    const textElement = document.createElement('div');
+                    // 使用marked解析Markdown格式
+                    textElement.innerHTML = marked.parse(part.text);
+                    messageElement.appendChild(textElement);
+                } else if (part.inlineData) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                    imgElement.style.maxWidth = '100%';
+                    imgElement.style.height = 'auto';
+                    messageElement.appendChild(imgElement);
+                }
+            });
+    } else {
+        // 处理纯文本响应，同样使用marked解析
+        messageElement.innerHTML = marked.parse(message.content);
+    }
+
+    chatDisplay.appendChild(messageElement);
 
     chatDisplay.appendChild(messageElement);
 
