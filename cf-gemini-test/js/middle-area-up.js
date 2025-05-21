@@ -42,8 +42,6 @@ export function displayMessage(message, chatDisplay) {
                 block.style.whiteSpace = 'pre-wrap';
                 block.style.wordBreak = 'break-word';
             });
-            // 确保普通文本的换行也能正确显示
-            messageElement.style.whiteSpace = 'pre-wrap';
         }
 
         chatDisplay.appendChild(messageElement);
