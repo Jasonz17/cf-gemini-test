@@ -40,6 +40,8 @@ export function displayMessage(message, chatDisplay) {
         }
 
         chatDisplay.appendChild(messageElement);
+        // 确保滚动到最新消息
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
         // 如果消息包含文件，显示文件预览
         if (message.files && message.files.length > 0) {
