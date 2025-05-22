@@ -1,13 +1,19 @@
+// --- START OF FILE main.ts ---
+
 import { Application } from "jsr:@oak/oak/application";
 import { Router } from "jsr:@oak/oak/router";
-import { connectDB, disconnectDB } from "./database/client.ts";
+// 更改导入方式，从 getClient 函数获取 client 实例
+import { getClient, connectDB, disconnectDB } from "./database/client.ts";
 import { ChatRepository } from "./database/repositories/chat.repository.ts";
 import { MessageRepository } from "./database/repositories/message.repository.ts";
 import { ChatService } from "./services/chat.service.ts";
 import { AIService } from "./services/ai.service.ts";
 
-// 初始化数据库连接并获取客户端实例
-const client = await connectDB();
+// 初始化数据库连接
+await connectDB();
+
+// 获取数据库客户端实例
+const client = getClient();
 
 // 创建服务实例
 const chatRepository = new ChatRepository(client);
@@ -43,3 +49,4 @@ await app.listen({ port });
 app.addEventListener("close", () => {
   disconnectDB();
 });
+// --- END OF FILE main.ts ---
