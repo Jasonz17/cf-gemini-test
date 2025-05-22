@@ -16,6 +16,7 @@ body {
     display: flex;
     flex: 1;
     gap: 10px;
+    overflow: hidden;
 }
 
 #left-sidebar {
