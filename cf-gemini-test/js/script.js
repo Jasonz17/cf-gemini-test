@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTopArea();
     initializeLeftSidebar();
     initializeMiddleArea();
+
+    // 初始化左侧容器的展开/收起功能
+    const listIcon = document.querySelector('.list-icon');
+    const leftSidebar = document.getElementById('left-sidebar');
+    
+    listIcon.addEventListener('click', () => {
+        leftSidebar.classList.toggle('collapsed');
+    });
     
     // 获取DOM元素
     const userInput = document.getElementById('user-input');
