@@ -3,6 +3,30 @@ import { GoogleGenAI, Modality } from "npm:@google/genai"; // 使用正确的库
 import { dirname, fromFileUrl, join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
+import { Client } from "https://deno.land/x/postgres@v0.21.5/mod.ts"; // PostgreSQL客户端
+
+// 数据库配置
+const dbClient = new Client({
+  connectionString: "postgresql://neondb_owner:npg_zMNKkv16wYiT@ep-polished-brook-a16oqjtd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+});
+
+// 初始化数据库连接并创建表
+await dbClient.connect();
+await dbClient.queryArray(`
+  CREATE TABLE IF NOT EXISTS chats (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+await dbClient.queryArray(`
+  CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    chat_id INTEGER REFERENCES chats(id),
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`);
 
 // 获取当前脚本所在的目录
 const __dirname = dirname(fromFileUrl(import.meta.url));
@@ -24,12 +48,38 @@ serve(async (req) => {
       const model = formData.get('model');
       const apikey = formData.get('apikey');
       const inputText = formData.get('input');
+      const chatId = formData.get('chatId'); // 前端传递的会话ID（新对话时为空）
+
+      // 处理会话ID（新对话创建新会话）
+      let currentChatId;
+      if (!chatId) {
+        const newChat = await dbClient.queryArray<[number]>(`INSERT INTO chats DEFAULT VALUES RETURNING id;`);
+        currentChatId = newChat.rows[0][0];
+      } else {
+        currentChatId = parseInt(chatId.toString());
+      }
+
+      // 获取历史消息
+      const historyResult = await dbClient.queryArray<[string, string]>(`
+        SELECT role, content FROM messages WHERE chat_id = $1 ORDER BY created_at ASC;
+      `, [currentChatId]);
+      const history = historyResult.rows.map(([role, content]) => ({ 
+        role,
+        parts: [{ text: content }],
+      }));
+      
 
       if (!model || !apikey) {
         return new Response("Missing model or apikey in request body", { status: 400 });
       }
 
       const ai = new GoogleGenAI({ apiKey: apikey.toString() });
+
+      // 创建带历史记录的chat实例
+      const chat = ai.chats.create({ 
+        model: model.toString(),
+        history: history,
+      });
 
       // 构建内容数组
       const contents = [];
