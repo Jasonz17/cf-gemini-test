@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@oak/oak": "jsr:@oak/oak",
+    "@db/postgres": "jsr:@db/postgres@^0.7.0"
+  }
+}
