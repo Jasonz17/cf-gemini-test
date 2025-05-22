@@ -17,3 +17,13 @@ body {
     flex: 1;
     gap: 10px;
 }
+
+#left-sidebar {
+    transition: transform 0.3s ease, width 0.3s ease;
+    width: 300px;
+}
+
+#left-sidebar.collapsed {
+    transform: translateX(-100%);
+    width: 0;
+}
