@@ -1,7 +1,8 @@
 import { Application } from "jsr:@oak/oak/application";
 import { Router } from "jsr:@oak/oak/router";
 import { Client } from "./database/client.ts";
-import { ChatRepository } from "../database/repositories/chat.repository.ts";
+import { ChatRepository } from "./database/repositories/chat.repository.ts";
+import { MessageRepository } from "./database/repositories/message.repository.ts";
 import { ChatService } from "./services/chat.service.ts";
 import { AIService } from "./services/ai.service.ts";
 
@@ -13,8 +14,9 @@ await client.connect();
 
 // 创建服务实例
 const chatRepository = new ChatRepository(client);
+const messageRepository = new MessageRepository(client);
 const aiService = new AIService(Deno.env.get("GEMINI_API_KEY"));
-const chatService = new ChatService(chatRepository, aiService);
+const chatService = new ChatService(chatRepository, messageRepository, aiService);
 
 // 创建路由
 const router = new Router();
