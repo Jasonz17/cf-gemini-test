@@ -18,6 +18,7 @@ body {
     gap: 10px;
     overflow: hidden;
     justify-content: flex-start;
+    min-width: 0; /* 确保flex子项可以正确缩小 */
 }
 
 #left-sidebar {
@@ -28,6 +29,7 @@ body {
 
 #left-sidebar.collapsed {
     transform: translateX(-300px);
-    width: 300px;
+    width: 0;
     visibility: hidden;
+    margin-right: 0;
 }
