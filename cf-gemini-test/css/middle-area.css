@@ -12,6 +12,8 @@
     border: 1px solid #000; /* Add black border */
     margin-right: 15px; /* 保留右边间隙 */
     margin-bottom: 15px; /* 增加底部15px间隙 */
+    transition: flex 0.3s ease;
+    min-width: 0; /* 确保flex item可以正确缩小 */
 }
 
 /* 中间区域的基础布局 */
