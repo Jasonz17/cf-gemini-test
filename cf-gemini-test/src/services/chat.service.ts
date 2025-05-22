@@ -1,4 +1,5 @@
 import { ChatRepository } from '../database/repositories/chat.repository.ts';
+import { MessageRepository } from '../database/repositories/message.repository.ts';
 import { AIService } from './ai.service.ts';
 
 export class ChatService {
