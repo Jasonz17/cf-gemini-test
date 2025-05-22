@@ -238,6 +238,19 @@ serve(async (req) => {
             }
           });
         }
+        // 存储用户消息到数据库
+        if (inputText) {
+          try {
+            await dbClient.queryArray(`
+              INSERT INTO messages (chat_id, role, content)
+              VALUES ($1, $2, $3)
+            `, [currentChatId, 'user', inputText.toString()]);
+            console.log('用户消息已成功存储到数据库');
+          } catch (userMsgError) {
+            console.error('存储用户消息时出错:', userMsgError);
+          }
+        }
+
         try {
           await dbClient.queryArray(`
             INSERT INTO messages (chat_id, role, content)
