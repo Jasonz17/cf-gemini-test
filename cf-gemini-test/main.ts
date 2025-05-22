@@ -186,28 +186,43 @@ serve(async (req) => {
 
         // 设置响应头，使用Transfer-Encoding: chunked
         const encoder = new TextEncoder();
-        const body = new ReadableStream({ async start(controller) { try { for await (const chunk of stream) { if (chunk.candidates && chunk.candidates[0]?.content?.parts) { // 将每个块转换为JSON字符串并发送 controller.enqueue(encoder.encode(JSON.stringify(chunk.candidates[0].content.parts) + '\n')); } } // 存储模型响应到数据库
-        let modelResponse = '';
-        for await (const chunk of stream) {
-          if (chunk.candidates && chunk.candidates[0]?.content?.parts) {
-            chunk.candidates[0].content.parts.forEach(part => {
-              if (part.text) {
-                modelResponse += part.text;
-              }
-            });
-          }
-        }
-        try {
-          await dbClient.queryArray(`
-            INSERT INTO messages (chat_id, role, content)
-            VALUES ($1, $2, $3)
-          `, [currentChatId, 'model', modelResponse]);
-          console.log('模型响应已成功存储到数据库');
-        } catch (modelMsgError) {
-          console.error('存储模型响应时出错:', modelMsgError);
-        }
-
-        controller.close(); } catch (error) { controller.error(error); } } });
+        const body = new ReadableStream({ 
+          async start(controller) { 
+            try { 
+              // 发送流式响应
+              for await (const chunk of stream) { 
+                if (chunk.candidates && chunk.candidates[0]?.content?.parts) { 
+                  controller.enqueue(encoder.encode(JSON.stringify(chunk.candidates[0].content.parts) + '\n')); 
+                } 
+              } 
+              // 重置流以便再次读取
+              const newStream = await ai.models.generateContentStream({ model: model.toString(), contents: contents, config: config });
+              // 存储模型响应到数据库
+              let modelResponse = ''; 
+              for await (const chunk of newStream) { 
+                if (chunk.candidates && chunk.candidates[0]?.content?.parts) { 
+                  chunk.candidates[0].content.parts.forEach(part => { 
+                    if (part.text) { 
+                      modelResponse += part.text; 
+                    } 
+                  }); 
+                } 
+              } 
+              try { 
+                await dbClient.queryArray(` 
+                  INSERT INTO messages (chat_id, role, content) 
+                  VALUES ($1, $2, $3) 
+                `, [currentChatId, 'model', modelResponse]); 
+                console.log('模型响应已成功存储到数据库'); 
+              } catch (modelMsgError) { 
+                console.error('存储模型响应时出错:', modelMsgError); 
+              } 
+              controller.close(); 
+            } catch (error) { 
+              controller.error(error); 
+            } 
+          } 
+        }); 
 
         return new Response(body, { headers: { 'Content-Type': 'application/x-ndjson', 'Transfer-Encoding': 'chunked', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' } });
       } else {
