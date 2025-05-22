@@ -183,7 +183,7 @@
     background-color: transparent;
     border: none;
     padding: 6px;
-    margin-left: 10px;
+    margin-left: 4px;
 }
 
 .send-button svg {
@@ -198,6 +198,17 @@
 
 .stream-toggle {
     width: 32px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: #e7f1ff;
+        .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+    };
     height: 32px;
     cursor: pointer;
     opacity: 1;
