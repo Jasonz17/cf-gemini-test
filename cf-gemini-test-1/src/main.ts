@@ -1,3 +1,35 @@
+// 调试路径信息
+console.log("当前工作目录:", Deno.cwd());
+
+// 打印 client.ts 的绝对路径
+const clientFilePath = new URL("./database/client.ts", import.meta.url).pathname;
+console.log("尝试访问的 client.ts 绝对路径:", clientFilePath);
+
+// 检查文件是否存在
+async function checkFileExists(path: string) {
+  try {
+    await Deno.stat(path);
+    return true;
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) {
+      return false;
+    }
+    throw err;
+  }
+}
+
+// 验证 client.ts 是否存在
+checkFileExists(clientFilePath).then(exists => {
+  console.log(`client.ts 文件是否存在: ${exists}`);
+}).catch(err => {
+  console.error("检查文件时出错:", err);
+});
+
+// 继续原有代码...
+import { Application } from "jsr:@oak/oak/application";
+import { Router } from "jsr:@oak/oak/router";
+// 其他导入语句...
+
 import { Application } from "jsr:@oak/oak/application";
 import { Router } from "jsr:@oak/oak/router";
 import { client } from "/cf-gemini-test/src/database/client.ts";
