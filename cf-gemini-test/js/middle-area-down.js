@@ -336,24 +336,6 @@ function getStopButtonSvg() {
     </svg>`;
 }
 
-let currentChatId = null;
-
-function handleSendMessage() {
-    if (!currentChatId) {
-        // 发送第一条消息时创建新会话 ID
-        fetch('/process', {
-            method: 'POST',
-            body: new FormData(),
-        }).then(response => response.json()).then(data => {
-            currentChatId = data.chatId;
-            addChatRecordButton(currentChatId);
-            sendMessageWithChatId();
-        });
-    } else {
-        sendMessageWithChatId();
-    }
-}
-
 function sendMessageWithChatId() {
     const formData = new FormData();
     formData.append('chatId', currentChatId);
