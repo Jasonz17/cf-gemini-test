@@ -3,7 +3,7 @@ import { GoogleGenAI, Modality } from "npm:@google/genai"; // 使用正确的库
 import { dirname, fromFileUrl, join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
-import { Client } from "https://deno.land/x/postgres@v0.21.5/mod.ts"; // PostgreSQL客户端
+import { Client } from "https://deno.land/x/postgres@v0.19.5/mod.ts"; // PostgreSQL客户端
 
 // 数据库配置
 const dbClient = new Client({
