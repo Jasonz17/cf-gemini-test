@@ -1,6 +1,6 @@
 import { Application } from "jsr:@oak/oak/application";
 import { Router } from "jsr:@oak/oak/router";
-import { Client } from "../database/client.ts";
+import { Client } from "./database/client.ts";
 import { ChatRepository } from "../database/repositories/chat.repository.ts";
 import { ChatService } from "./services/chat.service.ts";
 import { AIService } from "./services/ai.service.ts";
