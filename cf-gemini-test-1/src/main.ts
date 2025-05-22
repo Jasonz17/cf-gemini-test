@@ -7,10 +7,7 @@ import { ChatService } from "./services/chat.service.ts";
 import { AIService } from "./services/ai.service.ts";
 
 // 初始化数据库连接
-const client = new Client({
-  connectionString: Deno.env.get("DATABASE_URL"),
-});
-await client.connect();
+await connectDB();
 
 // 创建服务实例
 const chatRepository = new ChatRepository(client);
@@ -44,5 +41,5 @@ await app.listen({ port });
 
 // 关闭数据库连接
 app.addEventListener("close", () => {
-  client.end();
+  disconnectDB();
 });
