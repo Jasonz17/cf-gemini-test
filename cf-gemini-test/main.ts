@@ -182,46 +182,57 @@ serve(async (req) => {
       
       if (streamEnabled) {
         // 流式响应处理
-        const stream = await ai.models.generateContentStream({
-          model: model.toString(),
-          contents: contents,
-          config: config,
-        });
+        const stream = await ai.models.generateContentStream({ model: model.toString(), contents: contents, config: config });
 
         // 设置响应头，使用Transfer-Encoding: chunked
         const encoder = new TextEncoder();
-        const body = new ReadableStream({
-          async start(controller) {
-            try {
-              for await (const chunk of stream) {
-                if (chunk.candidates && chunk.candidates[0]?.content?.parts) {
-                  // 将每个块转换为JSON字符串并发送
-                  controller.enqueue(encoder.encode(JSON.stringify(chunk.candidates[0].content.parts) + '\n'));
-                }
+        const body = new ReadableStream({ async start(controller) { try { for await (const chunk of stream) { if (chunk.candidates && chunk.candidates[0]?.content?.parts) { // 将每个块转换为JSON字符串并发送 controller.enqueue(encoder.encode(JSON.stringify(chunk.candidates[0].content.parts) + '\n')); } } // 存储模型响应到数据库
+        let modelResponse = '';
+        for await (const chunk of stream) {
+          if (chunk.candidates && chunk.candidates[0]?.content?.parts) {
+            chunk.candidates[0].content.parts.forEach(part => {
+              if (part.text) {
+                modelResponse += part.text;
               }
-              controller.close();
-            } catch (error) {
-              controller.error(error);
-            }
+            });
           }
-        });
+        }
+        try {
+          await dbClient.queryArray(`
+            INSERT INTO messages (chat_id, role, content)
+            VALUES ($1, $2, $3)
+          `, [currentChatId, 'model', modelResponse]);
+          console.log('模型响应已成功存储到数据库');
+        } catch (modelMsgError) {
+          console.error('存储模型响应时出错:', modelMsgError);
+        }
 
-        return new Response(body, {
-          headers: {
-            'Content-Type': 'application/x-ndjson',
-            'Transfer-Encoding': 'chunked',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive'
-          }
-        });
+        controller.close(); } catch (error) { controller.error(error); } } });
+
+        return new Response(body, { headers: { 'Content-Type': 'application/x-ndjson', 'Transfer-Encoding': 'chunked', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' } });
       } else {
         // 非流式响应处理
-        const result = await ai.models.generateContent({
-          model: model.toString(),
-          contents: contents,
-          config: config,
-        });
-        
+        const result = await ai.models.generateContent({ model: model.toString(), contents: contents, config: config });
+
+        // 存储模型响应到数据库
+        let modelResponse = '';
+        if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts) {
+          result.candidates[0].content.parts.forEach(part => {
+            if (part.text) {
+              modelResponse += part.text;
+            }
+          });
+        }
+        try {
+          await dbClient.queryArray(`
+            INSERT INTO messages (chat_id, role, content)
+            VALUES ($1, $2, $3)
+          `, [currentChatId, 'model', modelResponse]);
+          console.log('模型响应已成功存储到数据库');
+        } catch (modelMsgError) {
+          console.error('存储模型响应时出错:', modelMsgError);
+        }
+
         // 处理响应，检查文本和图片部分
         if (result && result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts) {
           const parts = result.candidates[0].content.parts;
