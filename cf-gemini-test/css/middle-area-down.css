@@ -34,7 +34,10 @@
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 200px;
+    line-height: 1.4;
     font-size: 14px;
     color: #495057;
     text-align: center;
@@ -164,7 +167,10 @@
     font-size: 14px;
     pointer-events: none;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 200px;
+    line-height: 1.4;
 }
 
 .toolbar-icon .tooltip::after {
