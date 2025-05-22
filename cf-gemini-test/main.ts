@@ -3,11 +3,16 @@ import { GoogleGenAI, Modality } from "npm:@google/genai"; // 使用正确的库
 import { dirname, fromFileUrl, join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 import { encodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
-import { Client } from "https://deno.land/x/postgres@v0.19.5/mod.ts"; // PostgreSQL客户端
+import { Client } from "jsr:@db/postgres"; // PostgreSQL客户端（Deno官方驱动）
 
 // 数据库配置
 const dbClient = new Client({
-  connectionString: "postgresql://neondb_owner:npg_zMNKkv16wYiT@ep-polished-brook-a16oqjtd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+  user: "neondb_owner",
+  password: "npg_zMNKkv16wYiT",
+  database: "neondb",
+  hostname: "ep-polished-brook-a16oqjtd-pooler.ap-southeast-1.aws.neon.tech",
+  port: 5432,
+  ssl: "require",
 });
 
 // 初始化数据库连接并创建表
