@@ -10,11 +10,11 @@ const DB_CONFIG = {
   ssl: true
 };
 
-// 创建数据库客户端单例
-const client = new Client(DB_CONFIG);
-
 // 连接数据库
 async function connectDB() {
+  // 创建数据库客户端实例
+  const client = new Client(DB_CONFIG);
+
   try {
     await client.connect();
     console.log("成功连接到 PostgreSQL 数据库");
@@ -22,6 +22,7 @@ async function connectDB() {
     console.error("数据库连接失败:", error);
     throw error;
   }
+  return client;
 }
 
 // 断开数据库连接
@@ -35,4 +36,4 @@ async function disconnectDB() {
   }
 }
 
-export { client, connectDB, disconnectDB, DB_CONFIG };
+export { connectDB, disconnectDB, DB_CONFIG };
