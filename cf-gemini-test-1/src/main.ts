@@ -1,10 +1,10 @@
 import { Application } from "jsr:@oak/oak/application";
 import { Router } from "jsr:@oak/oak/router";
-import { client } from "./database/client.ts";
-import { ChatRepository } from "./database/repositories/chat.repository.ts";
-import { MessageRepository } from "./database/repositories/message.repository.ts";
-import { ChatService } from "./services/chat.service.ts";
-import { AIService } from "./services/ai.service.ts";
+import { client } from "/database/client.ts";
+import { ChatRepository } from "/database/repositories/chat.repository.ts";
+import { MessageRepository } from "/database/repositories/message.repository.ts";
+import { ChatService } from "/services/chat.service.ts";
+import { AIService } from "/services/ai.service.ts";
 
 // 初始化数据库连接
 const client = new Client({
