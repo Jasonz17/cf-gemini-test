@@ -24,6 +24,7 @@ body {
 }
 
 #left-sidebar.collapsed {
-    transform: translateX(-100%);
-    width: 0;
+    transform: translateX(-300px);
+    width: 300px;
+    visibility: hidden;
 }
