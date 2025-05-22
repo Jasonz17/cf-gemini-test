@@ -335,3 +335,55 @@ function getStopButtonSvg() {
         <rect x="8" y="8" width="8" height="8"></rect>
     </svg>`;
 }
+
+let currentChatId = null;
+
+function handleSendMessage() {
+    if (!currentChatId) {
+        // 发送第一条消息时创建新会话 ID
+        fetch('/process', {
+            method: 'POST',
+            body: new FormData(),
+        }).then(response => response.json()).then(data => {
+            currentChatId = data.chatId;
+            addChatRecordButton(currentChatId);
+            sendMessageWithChatId();
+        });
+    } else {
+        sendMessageWithChatId();
+    }
+}
+
+function sendMessageWithChatId() {
+    const formData = new FormData();
+    formData.append('chatId', currentChatId);
+    // 其他表单数据
+    fetch('/process', {
+        method: 'POST',
+        body: formData,
+    }).then(response => {
+        // 处理响应
+    });
+}
+
+function addChatRecordButton(chatId) {
+    const button = document.createElement('button');
+    button.textContent = `会话 ${chatId}`;
+    button.addEventListener('click', () => {
+        currentChatId = chatId;
+        loadChatHistory(chatId);
+    });
+    document.getElementById('chat-records').appendChild(button);
+}
+
+function loadChatHistory(chatId) {
+    fetch(`/getHistory?chatId=${chatId}`).then(response => response.json()).then(data => {
+        // 清空当前聊天记录
+        const chatDisplay = document.getElementById('chat-display');
+        chatDisplay.innerHTML = '';
+        // 显示历史记录
+        data.forEach(message => {
+            displayMessage(message, chatDisplay);
+        });
+    });
+}
