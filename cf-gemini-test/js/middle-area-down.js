@@ -189,6 +189,9 @@ async function handleSendMessage(userInput, sendButton, filePreviewContainer, di
 
         const formData = new FormData();
         formData.append('model', selectedModel);
+        if (typeof currentChatId !== 'undefined') {
+          formData.append('chatId', currentChatId);
+        }
         formData.append('apikey', apiKey);
         formData.append('input', messageText);
         formData.append('stream', isStreamMode.toString());
